@@ -56,27 +56,37 @@ export default function Login() {
 
         <form onSubmit={handleLogin} className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg space-y-6">
           
-          {/* ROLE SELECTION - ADD THIS */}
+          {/* ROLE SELECTION */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              I am a:
+              Official Portal Access (Select Role):
             </label>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {[
-                { value: 'official', label: 'Government Official (Admin)' },
-                { value: 'auditor', label: 'Auditor' },
-                { value: 'analyst', label: 'Budget Analyst (Department Head)' }
+                { value: 'official', label: 'Government Central Authority', desc: 'Allocate funds to states & districts' },
+                { value: 'auditor', label: 'Financial Auditor', desc: 'Review anomalies and transactions' }
               ].map((role) => (
-                <label key={role.value} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50">
+                <label key={role.value} className={`flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                  selectedRole === role.value 
+                    ? 'border-indigo-600 bg-indigo-50 shadow-sm shadow-indigo-100' 
+                    : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
+                }`}>
                   <input
                     type="radio"
                     name="role"
                     value={role.value}
                     checked={selectedRole === role.value}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="w-4 h-4 text-blue-600"
+                    className="w-4 h-4 text-indigo-600 mt-1"
                   />
-                  <span className="text-gray-700">{role.label}</span>
+                  <div>
+                    <span className={`block font-bold ${selectedRole === role.value ? 'text-indigo-900' : 'text-slate-700'}`}>
+                      {role.label}
+                    </span>
+                    <span className="block text-xs font-medium text-slate-500 mt-0.5">
+                      {role.desc}
+                    </span>
+                  </div>
                 </label>
               ))}
             </div>

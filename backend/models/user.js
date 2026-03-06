@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['official', 'auditor', 'analyst'], // CHANGE THIS (remove citizen)
+      enum: ['government', 'state', 'district', 'department', 'official', 'auditor', 'analyst'],
       required: true,
       default: 'analyst'
     },

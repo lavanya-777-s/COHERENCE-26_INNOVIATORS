@@ -1,10 +1,8 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import AboutUs from './pages/AboutUs';
-import AnalystDashboard from './pages/AnalystDashboard';
-import AuditorDashboard from './pages/AuditorDashboard';
 import CitizenPublicDashboard from './pages/CitizenPublicDashboard';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -23,7 +21,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/citizen" element={<CitizenPublicDashboard />} />
 
-        {/* Protected Routes - Government */}
+        {/* Protected Routes */}
         <Route
           path="/dashboard/official"
           element={
@@ -32,22 +30,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/dashboard/analyst"
-          element={
-            <ProtectedRoute requiredRole="analyst">
-              <AnalystDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/auditor"
-          element={
-            <ProtectedRoute requiredRole="auditor">
-              <AuditorDashboard />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
