@@ -52,7 +52,8 @@ export default function Login() {
 
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
-      
+
+      // ADD THIS - Role-based redirect
       const userRole = response.data.user.role;
       if (userRole === 'official' || userRole === 'officer') {
         navigate('/dashboard/official');
@@ -80,7 +81,7 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg space-y-6">
-          
+
           {/* ROLE SELECTION - ADD THIS */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">

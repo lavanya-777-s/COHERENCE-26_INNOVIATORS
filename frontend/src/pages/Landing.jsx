@@ -204,7 +204,7 @@ export default function Landing() {
                 <span className="font-mono-c text-gray-900 font-medium text-sm">SGBI</span>
               </div>
               <p className="text-gray-400 text-xs leading-relaxed max-w-xs mb-5">
-                Smart Governance Budget Intelligence. A Coherence 2026 hackathon prototype by Team Innovators. Budget data sourced exclusively from official Government of India portals.
+                Smart Governance Budget Intelligence. Budget data sourced exclusively from official Government of India portals.
               </p>
               <div className="flex flex-wrap gap-2">
                 {['data.gov.in', 'indiabudget.gov.in', 'cag.gov.in'].map((src) => (

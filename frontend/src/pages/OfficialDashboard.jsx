@@ -44,6 +44,11 @@ export default function OfficialDashboard() {
       status: 'Success'
     }
   ]);
+  const [summary, setSummary] = useState(null);
+  const [departments, setDepartments] = useState([]);
+  const [anomalies, setAnomalies] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const navigate = useNavigate();
 
@@ -277,8 +282,6 @@ export default function OfficialDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
         {/* --- TAB: OVERVIEW --- */}
-        {activeTab === 'overview' && (
-          <div className="space-y-4">
             
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -631,7 +634,6 @@ export default function OfficialDashboard() {
         )}
 
       </div>
-
       {/* Allocation Modal Popup */}
       <AllocationModal
         isOpen={allocationModalOpen}
