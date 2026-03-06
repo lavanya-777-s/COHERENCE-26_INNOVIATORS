@@ -8,11 +8,20 @@ import ReallocationTab from './official/ReallocationTab';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export default function OfficialDashboard() {
+<<<<<<< Updated upstream
   const [summary, setSummary] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [anomalies, setAnomalies] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
   const [loading, setLoading] = useState(true);
+=======
+  const [selectedState, setSelectedState] = useState(STATIC_DATA.states[0]?.id || '');
+  const [selectedDistrict, setSelectedDistrict] = useState(STATIC_DATA.states[0]?.districts[0]?.id || '');
+  const [expandedDept, setExpandedDept] = useState(null);
+  const [allocationModalOpen, setAllocationModalOpen] = useState(false);
+  const [allocationTarget, setAllocationTarget] = useState({ target: null, type: 'dept' });
+  const [allocations, setAllocations] = useState([]);
+>>>>>>> Stashed changes
   const [activeTab, setActiveTab] = useState('overview');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -97,6 +106,7 @@ export default function OfficialDashboard() {
         </div>
       </div>
 
+<<<<<<< Updated upstream
       {/* Tab Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {activeTab === 'overview' && (
@@ -120,6 +130,20 @@ export default function OfficialDashboard() {
           <ReallocationTab departments={departments} />
         )}
       </div>
+=======
+      {/* Allocation Modal Popup */}
+      <AllocationModal
+        isOpen={allocationModalOpen}
+        onClose={() => setAllocationModalOpen(false)}
+        target={allocationTarget.target || {}}
+        type={allocationTarget.type}
+        district={currentDistrict}
+        onAllocate={handleAllocate}
+      />
+
+      {/* Floating Predictor AI Chatbot */}
+      <Chatbot district={currentDistrict} />
+>>>>>>> Stashed changes
     </div>
   );
 }
