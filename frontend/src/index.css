@@ -37,12 +37,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #a855f7, #ec4899);
+  background: #6366f1; /* Indigo-500 to match the site */
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #9333ea, #db2777);
+  background: #4f46e5; /* Indigo-600 */
 }
 
 /* Custom animations */
@@ -185,12 +185,12 @@ html {
 
 /* Selection style */
 ::selection {
-  background-color: rgba(168, 85, 247, 0.3);
+  background-color: rgba(99, 102, 241, 0.3); /* indigo-500/30 */
   color: #fff;
 }
 
 ::-moz-selection {
-  background-color: rgba(168, 85, 247, 0.3);
+  background-color: rgba(99, 102, 241, 0.3);
   color: #fff;
 }
 

@@ -75,7 +75,7 @@ export default function Chatbot({ district }) {
               </div>
               <div>
                 <h3 className="font-bold text-sm tracking-wide flex items-center gap-2">
-                  Lumina AI
+                  Predictor AI
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 </h3>
                 <p className="text-[10px] text-indigo-100 font-medium uppercase tracking-wider">GovTech Intelligence Assistant</p>

@@ -9,7 +9,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [department, setDepartment] = useState('');
-  const [role, setRole] = useState('analyst'); // default
+  const [role, setRole] = useState('officer'); // default
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -40,7 +40,7 @@ export default function Register() {
           email, 
           password,
           role, // ADD THIS
-          department: role === 'analyst' ? department : null // ADD THIS
+          department: role === 'officer' ? department : null // ADD THIS
         }
       );
 
@@ -128,14 +128,13 @@ export default function Register() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full bg-gray-50 border border-gray-300 text-gray-900 px-4 py-2.5 rounded-lg focus:outline-none focus:border-blue-500"
             >
-              <option value="official">Government Official (Admin)</option>
+              <option value="officer">Government Officer</option>
               <option value="auditor">Auditor</option>
-              <option value="analyst">Budget Analyst (Department Head)</option>
             </select>
           </div>
 
-          {/* DEPARTMENT - Show only for analysts */}
-          {role === 'analyst' && (
+          {/* DEPARTMENT - Show only for officers */}
+          {role === 'officer' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Department

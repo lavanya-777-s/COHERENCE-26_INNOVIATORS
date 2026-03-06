@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState('official'); // ADD THIS
+  const [selectedRole, setSelectedRole] = useState('officer'); // Default to officer
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -17,25 +17,50 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // Offline Hackathon Bypass logic
+      if ((email === 'official@gov.in' || email === 'officer@gov.in') && password === '12345678') {
+        const fakeUser = {
+          id: 'auth-1',
+          name: 'Chief Officer',
+          email: email,
+          role: 'officer'
+        };
+        localStorage.setItem('token', 'mock_token_officer');
+        localStorage.setItem('user', JSON.stringify(fakeUser));
+        navigate('/dashboard/official'); // Routing to the official dashboard we built
+        return;
+      }
+      
+      if (email === 'auditor@gov.in' && password === '12345678') {
+        const fakeUser = {
+          id: 'auth-2',
+          name: 'Lead Auditor',
+          email: email,
+          role: 'auditor'
+        };
+        localStorage.setItem('token', 'mock_token_auditor');
+        localStorage.setItem('user', JSON.stringify(fakeUser));
+        navigate('/dashboard/auditor'); 
+        return;
+      }
+
+      // Try actual backend if not offline bypassed
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/login`,
-        { email, password, role: selectedRole } // ADD role
+        { email, password, role: selectedRole }
       );
 
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
-      // ADD THIS - Role-based redirect
       const userRole = response.data.user.role;
-      if (userRole === 'official') {
+      if (userRole === 'official' || userRole === 'officer') {
         navigate('/dashboard/official');
       } else if (userRole === 'auditor') {
         navigate('/dashboard/auditor');
-      } else if (userRole === 'analyst') {
-        navigate('/dashboard/analyst');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Login failed. Note: Use official@gov.in / 12345678 to test.');
     } finally {
       setLoading(false);
     }
@@ -63,9 +88,8 @@ export default function Login() {
             </label>
             <div className="space-y-2">
               {[
-                { value: 'official', label: 'Government Official (Admin)' },
-                { value: 'auditor', label: 'Auditor' },
-                { value: 'analyst', label: 'Budget Analyst (Department Head)' }
+                { value: 'officer', label: 'Government Officer' },
+                { value: 'auditor', label: 'Auditor' }
               ].map((role) => (
                 <label key={role.value} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50">
                   <input

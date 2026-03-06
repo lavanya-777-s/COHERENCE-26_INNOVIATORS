@@ -1,11 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// High-Level Security Middleware
+app.use(helmet()); // Sets robust HTTP headers
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 100, // Limit each IP to 100 requests per window
+  message: 'Too many requests from this IP, please try again after 15 minutes.',
+  standardHeaders: true, 
+  legacyHeaders: false, 
+});
+app.use('/api/', limiter); // Apply to all our MongoDB access routes
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

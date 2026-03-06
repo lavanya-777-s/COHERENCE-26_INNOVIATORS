@@ -1,8 +1,9 @@
 import { Home, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -11,6 +12,10 @@ export default function Navbar() {
     localStorage.removeItem('user');
     navigate('/login');
   };
+
+  if (location.pathname.startsWith('/dashboard')) {
+    return null;
+  }
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
