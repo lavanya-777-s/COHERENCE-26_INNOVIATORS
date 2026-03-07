@@ -35,9 +35,9 @@ export default function Register() {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/register`,
-        { 
-          name, 
-          email, 
+        {
+          name,
+          email,
           password,
           role, // ADD THIS
           department: role === 'officer' ? department : null // ADD THIS
@@ -69,7 +69,7 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleRegister} className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg space-y-5">
-          
+
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
               {error}

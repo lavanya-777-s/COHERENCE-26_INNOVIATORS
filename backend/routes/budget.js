@@ -74,7 +74,7 @@ router.get('/departments', async (req, res) => {
     const departments = Object.entries(deptMap).map(([name, vals]) => {
       const overSpent = vals.spent > vals.allocated;
       const underUtilized = vals.spent < vals.allocated * 0.3;
-      
+
       // Risk Score Logic
       let riskScore = 1;
       if (overSpent) riskScore = Math.min(10, Math.round((vals.spent / vals.allocated) * 5));

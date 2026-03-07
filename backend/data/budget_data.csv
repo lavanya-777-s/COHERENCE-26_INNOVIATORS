@@ -1,61 +1,501 @@
-department,district,project_name,budget_allocated,amount_spent,month
-Health,Nairobi,Hospital Renovation,5000000,5100000,January
-Education,Mombasa,School Construction,3000000,2900000,January
-Water,Kisumu,Borehole Drilling,1500000,1450000,January
-Roads,Nakuru,Road Repair Phase 1,8000000,7800000,January
-Agriculture,Eldoret,Irrigation Setup,2000000,1900000,January
-Health,Nairobi,Medical Equipment,4000000,3950000,February
-Education,Mombasa,Teacher Training,500000,490000,February
-Water,Kisumu,Pipeline Extension,2500000,2480000,February
-Roads,Nakuru,Bridge Construction,12000000,11500000,February
-Agriculture,Eldoret,Seed Distribution,800000,780000,February
-Health,Nairobi,Drug Procurement,6000000,9500000,March
-Education,Mombasa,Textbook Supply,1200000,1180000,March
-Water,Kisumu,Purification Plant,7000000,6800000,March
-Roads,Nakuru,Highway Expansion,20000000,19800000,March
-Agriculture,Eldoret,Fertilizer Supply,1500000,200000,March
-Health,Nairobi,Ambulance Purchase,3000000,4500000,April
-Education,Mombasa,Lab Equipment,2000000,1950000,April
-Water,Kisumu,Water Towers,5000000,4900000,April
-Roads,Nakuru,Street Lighting,1000000,980000,April
-Agriculture,Eldoret,Cold Storage,3000000,2950000,April
-Health,Nairobi,Staff Housing,4000000,3900000,May
-Education,Mombasa,Computer Lab,2500000,2400000,May
-Water,Kisumu,Sewage System,8000000,7800000,May
-Roads,Nakuru,Pedestrian Walkways,600000,580000,May
-Agriculture,Eldoret,Market Construction,4000000,3900000,May
-Health,Nairobi,ICU Setup,10000000,9800000,June
-Education,Mombasa,Sports Facilities,1500000,50000,June
-Water,Kisumu,Meter Installation,500000,495000,June
-Roads,Nakuru,Traffic Signals,800000,790000,June
-Agriculture,Eldoret,Greenhouse Project,2000000,1950000,June
-Health,Nairobi,Mental Health Unit,3000000,2950000,July
-Education,Mombasa,Library Setup,1800000,1750000,July
-Water,Kisumu,Reservoir Upgrade,6000000,8900000,July
-Roads,Nakuru,Rural Access Roads,5000000,4800000,July
-Agriculture,Eldoret,Training Center,1000000,980000,July
-Health,Nairobi,Vaccination Drive,2000000,1950000,August
-Education,Mombasa,Scholarship Fund,3000000,2900000,August
-Water,Kisumu,Desalination Study,500000,490000,August
-Roads,Nakuru,Drainage Systems,4000000,3900000,August
-Agriculture,Eldoret,Crop Insurance,700000,680000,August
-Health,Nairobi,Radiology Equipment,8000000,12000000,September
-Education,Mombasa,University Grants,5000000,4900000,September
-Water,Kisumu,Smart Meters,2000000,1950000,September
-Roads,Nakuru,Road Marking,300000,295000,September
-Agriculture,Eldoret,Export Support,1200000,1150000,September
-Health,Nairobi,Dialysis Center,6000000,5900000,October
-Education,Mombasa,Adult Literacy,400000,30000,October
-Water,Kisumu,Leak Detection,1000000,980000,October
-Roads,Nakuru,Bypass Construction,15000000,14800000,October
-Agriculture,Eldoret,Livestock Support,900000,870000,October
-Health,Nairobi,Surgery Wing,12000000,11800000,November
-Education,Mombasa,STEM Programs,1500000,1450000,November
-Water,Kisumu,Community Taps,800000,780000,November
-Roads,Nakuru,Rest Areas,600000,585000,November
-Agriculture,Eldoret,Agri-Tech Pilot,2000000,1950000,November
-Health,Nairobi,Staff Training,1000000,980000,December
-Education,Mombasa,Exam Centers,700000,685000,December
-Water,Kisumu,Annual Maintenance,500000,490000,December
-Roads,Nakuru,Year-End Audit,200000,195000,December
-Agriculture,Eldoret,Annual Review,300000,290000,December
+department,district,allocated_budget,spent_budget,month,financial_year
+Infrastructure,East,58156112.3,4278700.31,August,2024-25
+Agriculture,North,53499281.7,6532449.19,November,2024-25
+Health,Central,72242144.26,4271438.74,August,2023-24
+Agriculture,North,64867396.11,3264792.1,February,2023-24
+Agriculture,East,39886186.72,2298873.05,July,2023-24
+Health,West,34720364.71,2230988.39,August,2023-24
+Agriculture,North,39656469.61,351679.19,November,2024-25
+Energy,North,70111492.79,5174743.72,July,2024-25
+Agriculture,South,95778452.8,30143578.54,April,2023-24
+Infrastructure,Central,52405621.88,2700617.49,August,2024-25
+Defense,North,68423370.42,754472.59,May,2024-25
+Science,West,11335053.64,714394.75,April,2023-24
+Agriculture,West,60690326.4,3652838.35,November,2024-25
+Health,West,37589589.0,3851896.31,January,2024-25
+Defense,East,21488953.88,1579919.75,March,2023-24
+Health,East,87529425.22,5855738.51,July,2024-25
+Agriculture,Central,62621953.42,3680928.57,October,2024-25
+Health,East,27288994.47,1695837.34,September,2024-25
+Health,East,76914902.31,4748743.49,January,2024-25
+Agriculture,East,87613471.66,4448590.89,September,2023-24
+Health,East,81415098.65,5241707.03,November,2024-25
+Energy,West,83982342.72,4920582.17,July,2023-24
+Health,South,64937110.02,4716625.06,July,2024-25
+Energy,Central,18469408.38,1272376.27,January,2024-25
+Health,East,68707205.43,4136773.42,July,2023-24
+Defense,North,80662849.64,4233601.9,January,2023-24
+Energy,North,12320107.32,906107.99,July,2023-24
+Defense,North,27137958.1,1907502.47,February,2024-25
+Science,West,84052542.98,427295.59,July,2024-25
+Defense,West,31487524.71,1605474.27,March,2023-24
+Agriculture,East,18695152.98,955864.64,February,2024-25
+Defense,North,35968758.61,2175596.27,December,2023-24
+Infrastructure,East,52637688.33,3674135.18,November,2023-24
+Infrastructure,North,99451288.5,6253359.64,May,2023-24
+Health,North,41765260.38,2883348.82,October,2024-25
+Energy,West,88182488.65,4556356.61,July,2024-25
+Infrastructure,Central,64823994.36,3252946.11,January,2023-24
+Science,East,13527191.64,822620.56,April,2023-24
+Science,South,20080844.05,1393325.15,March,2024-25
+Agriculture,South,84127680.79,4876324.36,September,2024-25
+Infrastructure,Central,13003653.05,656701.95,August,2023-24
+Science,West,93872413.57,11274462.83,April,2023-24
+Energy,East,87671071.21,5417462.61,January,2024-25
+Health,East,69360290.99,3694895.83,March,2024-25
+Health,South,56195519.14,2843632.68,January,2024-25
+Infrastructure,West,28097792.63,1419091.16,May,2024-25
+Infrastructure,East,68706952.04,4506555.11,February,2023-24
+Infrastructure,North,43942323.73,2813385.04,April,2024-25
+Energy,South,13592702.48,717829.55,June,2023-24
+Defense,West,16910150.52,82602.81,January,2024-25
+Agriculture,North,44077279.36,2912607.62,July,2024-25
+Health,Central,66887210.82,4035547.2,November,2024-25
+Defense,East,65775552.73,4710178.59,January,2024-25
+Infrastructure,North,29899818.89,1685017.61,September,2024-25
+Defense,Central,85526812.06,4567021.52,July,2024-25
+Defense,East,48908691.0,2696299.03,September,2023-24
+Defense,East,25849763.49,1622266.04,January,2023-24
+Defense,West,42160183.09,2359230.75,September,2024-25
+Agriculture,East,94645988.43,6710298.51,March,2024-25
+Infrastructure,East,59382007.86,3112412.19,April,2024-25
+Health,South,73895267.04,3961436.75,October,2023-24
+Agriculture,East,86013374.05,5261567.64,October,2023-24
+Education,Central,34967358.5,2097021.17,May,2024-25
+Defense,West,98444512.56,5986271.63,June,2024-25
+Infrastructure,West,19064571.66,1320048.61,June,2023-24
+Science,Central,47853213.78,2796738.13,August,2023-24
+Science,North,29942956.55,1569327.91,May,2023-24
+Health,South,46755527.46,5514439.41,October,2023-24
+Infrastructure,South,91054680.48,6118487.9,April,2024-25
+Education,West,55217702.52,2972784.14,June,2023-24
+Defense,North,35009738.89,1925367.1,February,2024-25
+Agriculture,North,76558871.35,4274554.95,July,2023-24
+Agriculture,West,86844757.84,5571300.39,May,2024-25
+Health,Central,48533303.83,4824669.96,February,2024-25
+Health,East,26892842.53,1664502.12,April,2023-24
+Energy,South,14540650.52,1059505.59,October,2023-24
+Agriculture,West,92513610.85,5374867.49,July,2024-25
+Education,North,74169270.18,4444945.8,March,2023-24
+Health,West,86395919.05,5768298.15,August,2023-24
+Science,West,89813880.51,995227.71,November,2023-24
+Infrastructure,East,50703212.19,3553225.88,November,2024-25
+Education,East,89428490.27,1309476.03,April,2024-25
+Defense,North,31407201.94,2234815.88,January,2023-24
+Energy,South,35126358.48,2560404.31,April,2023-24
+Science,West,72160375.57,4805514.94,June,2023-24
+Infrastructure,North,24588602.14,1524787.64,August,2023-24
+Infrastructure,North,10710932.57,653932.89,November,2024-25
+Energy,North,10676262.92,550313.95,June,2023-24
+Energy,North,68489858.84,4902810.5,May,2024-25
+Health,North,87375082.68,4898410.35,August,2023-24
+Defense,Central,82500186.99,4391448.01,May,2024-25
+Energy,North,50723946.99,3522937.5,August,2023-24
+Agriculture,East,98474412.37,5222947.23,October,2023-24
+Health,West,36387687.94,2287680.93,July,2023-24
+Science,South,23922147.58,1314370.52,September,2024-25
+Agriculture,West,75227278.63,4168761.29,May,2024-25
+Agriculture,West,23550948.18,1365125.39,October,2024-25
+Infrastructure,Central,53986256.14,2848991.53,December,2024-25
+Science,Central,28088631.43,1627598.74,October,2024-25
+Education,East,83962594.52,5155596.09,July,2023-24
+Infrastructure,South,98659613.89,6219995.5,January,2024-25
+Infrastructure,West,93929767.59,5654407.33,February,2023-24
+Agriculture,East,78353537.84,4107639.91,February,2024-25
+Health,Central,78773582.28,5631031.34,January,2024-25
+Energy,Central,85569403.55,8796740.68,October,2023-24
+Defense,South,21459297.97,1515650.74,July,2024-25
+Defense,West,49883976.82,3587925.08,June,2024-25
+Education,South,88183133.41,6311824.45,October,2023-24
+Education,West,72394911.39,4274813.56,January,2024-25
+Health,Central,87867080.35,4565698.67,June,2023-24
+Education,West,65568485.69,8012138.81,April,2024-25
+Defense,North,33735013.25,1839387.11,September,2023-24
+Defense,East,73331719.08,3804751.08,March,2024-25
+Health,Central,94797962.18,4925473.7,January,2024-25
+Science,South,43916432.98,3124723.13,December,2023-24
+Agriculture,East,29022542.14,1941395.77,May,2023-24
+Infrastructure,West,39428987.9,2250448.39,November,2024-25
+Science,South,21958900.92,1341433.5,January,2023-24
+Science,East,80419870.73,5225743.73,October,2024-25
+Energy,East,25999441.77,1308396.43,August,2024-25
+Energy,West,24177100.72,1379337.47,August,2023-24
+Education,North,99667356.42,6123354.5,October,2023-24
+Education,North,44574363.14,2805021.64,December,2024-25
+Energy,South,90638602.66,5498906.46,April,2024-25
+Health,East,67663310.12,630176.77,November,2024-25
+Science,West,78583633.25,5643303.25,October,2023-24
+Infrastructure,South,89768528.18,980005.22,October,2024-25
+Health,East,31036692.66,3508319.35,March,2023-24
+Science,North,87937809.81,4648271.68,October,2024-25
+Education,West,87063336.55,24557639.58,June,2024-25
+Agriculture,West,36212277.37,2279725.85,September,2024-25
+Defense,Central,99370426.19,5592867.73,August,2023-24
+Science,South,92622200.96,6028332.53,December,2023-24
+Defense,East,12001514.81,871724.27,December,2024-25
+Energy,East,96707010.54,9553949.9,January,2024-25
+Energy,West,25254647.94,1760933.56,November,2024-25
+Infrastructure,South,84788550.42,5414895.76,June,2023-24
+Science,North,82150111.67,5682752.03,June,2024-25
+Science,South,94553349.27,5520170.41,March,2024-25
+Health,North,99623707.94,5028037.53,March,2023-24
+Infrastructure,North,51983407.8,2776225.54,November,2023-24
+Defense,Central,55212583.32,3626366.1,September,2023-24
+Education,West,97424003.7,9019626.81,November,2024-25
+Defense,West,46638772.31,3133981.03,July,2023-24
+Health,North,10614620.22,726577.42,November,2024-25
+Health,North,69843490.68,3852652.07,August,2023-24
+Science,North,90848869.14,5258238.92,October,2023-24
+Infrastructure,South,81889732.53,947829.8,February,2024-25
+Energy,North,59163306.3,2996691.99,April,2023-24
+Science,West,32594366.5,1864427.61,March,2023-24
+Health,West,51396370.82,2638931.09,December,2024-25
+Science,Central,11381890.47,707975.02,April,2023-24
+Energy,South,95082921.11,5146584.13,July,2023-24
+Education,South,94674410.98,7095048.27,July,2023-24
+Energy,West,96957706.29,6513457.55,August,2024-25
+Energy,North,77348695.08,4334995.92,June,2024-25
+Infrastructure,West,81036637.62,4348570.8,January,2023-24
+Science,North,47879854.43,5758227.7,December,2024-25
+Health,Central,81183896.74,806929.97,May,2024-25
+Education,West,83499312.93,5236535.41,February,2024-25
+Science,West,74258441.91,4886110.95,August,2024-25
+Education,West,24898189.68,1738772.71,June,2024-25
+Defense,South,12580412.0,705081.49,December,2023-24
+Defense,Central,41528285.28,2085575.57,April,2024-25
+Energy,South,32048284.65,1732119.21,June,2023-24
+Infrastructure,South,75600613.89,4359745.36,October,2024-25
+Energy,North,16852406.56,1215110.87,August,2023-24
+Infrastructure,West,53877890.4,3614241.59,September,2023-24
+Education,Central,93732037.52,6418704.39,June,2024-25
+Defense,North,50942944.78,3270477.96,January,2024-25
+Energy,North,66589532.24,4327359.96,December,2023-24
+Energy,West,82486897.67,4183048.91,January,2024-25
+Science,Central,15793422.48,814698.94,April,2024-25
+Infrastructure,North,58306414.12,3562116.08,July,2024-25
+Agriculture,South,28363714.52,329520.38,September,2024-25
+Health,South,67723075.51,4977544.32,September,2023-24
+Health,South,45859307.53,10180331.73,July,2024-25
+Health,East,11405246.74,821438.43,January,2024-25
+Agriculture,West,68534427.04,3863005.56,March,2024-25
+Agriculture,Central,57938301.71,3875245.49,May,2024-25
+Defense,North,46778434.57,2622507.88,June,2024-25
+Energy,West,44509089.61,2299643.63,April,2024-25
+Health,South,34392608.72,2258502.65,November,2023-24
+Education,East,42034335.91,4478698.61,November,2024-25
+Health,North,78452127.47,5602637.69,July,2023-24
+Agriculture,South,49023525.66,3312606.53,January,2024-25
+Agriculture,North,37654385.57,9205078.2,February,2024-25
+Infrastructure,East,84372520.98,5486260.32,July,2023-24
+Education,East,44029813.27,347362.65,September,2023-24
+Education,North,80187523.76,5509656.53,February,2023-24
+Education,East,96425436.66,7038030.11,February,2024-25
+Defense,Central,46973986.46,3148576.24,April,2024-25
+Infrastructure,South,81698441.35,4899101.12,October,2024-25
+Infrastructure,West,72013600.24,4746591.62,August,2024-25
+Science,Central,42597638.76,3124681.62,December,2023-24
+Health,South,55602009.73,4012458.45,July,2023-24
+Education,North,44093042.22,2550251.88,December,2024-25
+Defense,South,25117216.9,1284820.33,May,2023-24
+Agriculture,Central,11911446.07,851428.34,February,2024-25
+Energy,North,90110158.34,6500891.89,November,2024-25
+Infrastructure,Central,41458031.33,2285725.22,June,2023-24
+Energy,East,54901794.5,4071247.46,June,2023-24
+Infrastructure,East,89303869.28,5018560.58,March,2023-24
+Agriculture,North,94410262.15,5506834.52,March,2023-24
+Agriculture,Central,16321341.46,961044.49,September,2023-24
+Infrastructure,North,95445836.09,5167991.17,September,2024-25
+Defense,West,91685134.38,4629322.43,May,2024-25
+Energy,West,92787984.46,6482249.57,August,2023-24
+Infrastructure,South,80976489.53,9911136.55,August,2023-24
+Energy,South,62156908.46,3862435.31,September,2023-24
+Agriculture,East,78350263.17,4976517.18,February,2024-25
+Infrastructure,South,69823440.44,5026774.09,April,2023-24
+Energy,West,49933674.57,3621693.47,December,2024-25
+Health,North,93154205.93,5038252.33,May,2023-24
+Agriculture,North,99287524.8,6670856.03,May,2024-25
+Health,North,85270695.74,4802939.31,January,2023-24
+Defense,South,35209153.63,3682748.69,June,2024-25
+Education,East,97121045.49,26011631.59,November,2023-24
+Agriculture,South,56310819.97,17315652.55,April,2024-25
+Defense,Central,58977082.74,4293293.05,October,2024-25
+Health,West,71537246.86,3634692.48,December,2024-25
+Science,North,11592399.85,613387.25,September,2024-25
+Science,North,79157377.75,5602505.4,March,2024-25
+Defense,North,85839927.64,4899626.36,May,2024-25
+Health,South,88151775.22,5087369.79,June,2023-24
+Infrastructure,Central,83155633.65,4201402.64,September,2023-24
+Energy,East,40459676.07,2200859.01,December,2023-24
+Defense,West,23781447.62,1217102.87,January,2024-25
+Defense,East,20167770.4,168113.27,August,2023-24
+Health,West,96264945.69,6029452.51,August,2024-25
+Health,East,34447250.44,2357061.61,April,2023-24
+Science,Central,76315556.99,3977567.43,September,2024-25
+Education,East,87243765.95,5432871.41,April,2024-25
+Infrastructure,East,64991372.77,4655444.61,October,2024-25
+Education,East,72031351.92,5044567.79,January,2023-24
+Agriculture,East,21286048.95,1311184.9,February,2023-24
+Infrastructure,Central,71878023.53,4599058.31,April,2024-25
+Energy,East,45558212.2,3318686.52,April,2023-24
+Energy,Central,39645288.77,2172166.45,February,2024-25
+Infrastructure,South,39918081.21,2175187.6,September,2023-24
+Health,East,80293815.74,18734803.5,December,2023-24
+Defense,East,75643378.27,5088197.48,September,2024-25
+Science,South,40453789.14,2155254.16,December,2024-25
+Education,South,76065177.37,3945437.13,May,2024-25
+Energy,West,82866979.64,5193994.03,October,2023-24
+Energy,South,40465509.56,2814872.64,June,2023-24
+Defense,West,26244071.34,1860884.38,November,2023-24
+Health,West,80125418.12,5265088.64,November,2024-25
+Science,North,54832185.24,3041732.99,January,2023-24
+Education,East,60390248.5,4207314.7,April,2024-25
+Defense,West,59300231.78,4079420.34,May,2024-25
+Science,Central,36369723.34,1832885.61,March,2024-25
+Education,South,63493294.76,3529896.74,July,2023-24
+Education,East,81265802.78,4687301.63,May,2024-25
+Infrastructure,South,17171825.25,1125215.33,April,2024-25
+Science,Central,70108955.07,4101839.39,October,2024-25
+Energy,West,62719698.86,4107587.74,March,2024-25
+Health,West,46865486.38,13249685.16,March,2023-24
+Infrastructure,East,40011709.59,2365991.31,August,2023-24
+Agriculture,East,76532241.23,4293521.61,October,2023-24
+Agriculture,Central,14008791.46,904006.22,September,2024-25
+Infrastructure,East,43672245.05,2302960.25,July,2024-25
+Health,West,61446646.43,4418222.64,December,2024-25
+Defense,East,64869319.16,3578039.92,May,2024-25
+Infrastructure,West,28353971.16,2061231.8,November,2024-25
+Science,South,44115241.15,2603128.02,May,2024-25
+Education,East,29064752.62,1788443.06,May,2024-25
+Defense,South,58780258.15,3139859.5,April,2023-24
+Education,South,15044062.14,3449217.54,January,2024-25
+Defense,East,27975187.85,2086102.22,December,2023-24
+Infrastructure,West,59742702.39,3074081.21,June,2023-24
+Infrastructure,North,85446285.44,4350903.25,August,2023-24
+Agriculture,Central,80718354.26,4636984.54,February,2023-24
+Education,South,86789596.28,4556719.05,April,2024-25
+Science,South,95746488.31,5908533.69,September,2024-25
+Infrastructure,North,74669474.95,4348045.7,October,2023-24
+Science,Central,14537685.95,1482565.34,January,2024-25
+Education,East,95301327.42,7126961.65,November,2024-25
+Health,North,40672225.34,2088073.99,April,2023-24
+Defense,South,89588764.68,4635304.68,July,2023-24
+Education,North,68865243.43,4383367.01,February,2023-24
+Defense,North,34193823.64,2476241.19,August,2023-24
+Agriculture,East,41631888.15,666005.11,November,2024-25
+Science,Central,43979116.66,10753035.71,February,2023-24
+Science,North,56993875.26,3562955.83,February,2024-25
+Energy,South,60834425.36,3852901.05,September,2023-24
+Infrastructure,North,21148076.26,1441902.33,October,2023-24
+Education,West,59226587.99,3883738.95,June,2023-24
+Education,North,11183300.41,1375142.58,July,2024-25
+Agriculture,Central,13585694.93,888039.34,March,2024-25
+Agriculture,Central,50976277.96,3578869.47,August,2023-24
+Science,West,66905206.61,3544283.18,January,2024-25
+Education,North,80253843.85,5692947.69,February,2023-24
+Agriculture,Central,77265707.54,5246910.43,June,2023-24
+Education,West,98752509.68,4964700.89,July,2024-25
+Science,Central,77165734.39,5474722.47,November,2024-25
+Infrastructure,South,63392304.85,4464620.77,November,2024-25
+Infrastructure,West,54860691.45,3453699.79,August,2024-25
+Infrastructure,South,47024784.36,3267846.54,March,2024-25
+Agriculture,Central,40054854.39,2285186.34,November,2023-24
+Agriculture,West,78578949.51,1224017.24,February,2024-25
+Energy,Central,45092016.7,4357689.42,August,2024-25
+Agriculture,West,69821027.95,4616102.72,November,2024-25
+Science,South,78712722.61,4448715.54,April,2023-24
+Health,North,19212899.27,1156389.72,August,2024-25
+Science,East,53103622.4,3373491.46,March,2024-25
+Education,Central,28549081.19,2076568.42,May,2024-25
+Defense,East,43280624.71,3115698.8,April,2024-25
+Education,East,88025554.22,5969699.09,January,2023-24
+Energy,East,98310193.22,7131358.12,October,2024-25
+Science,Central,27225103.79,1605562.25,July,2023-24
+Defense,Central,59234338.25,3908979.13,February,2023-24
+Health,South,98324743.36,5457821.33,April,2023-24
+Defense,North,55535689.87,3339730.45,May,2023-24
+Agriculture,North,50470130.08,3071343.77,December,2023-24
+Agriculture,West,65989304.26,4458337.25,September,2024-25
+Infrastructure,South,93211329.57,5284209.24,February,2023-24
+Infrastructure,North,59792373.7,3778965.72,September,2024-25
+Health,West,51826350.05,3677620.34,March,2023-24
+Science,North,90409744.47,5511354.8,March,2023-24
+Education,North,81563467.27,1157238.24,April,2023-24
+Infrastructure,East,39123711.65,2101320.43,January,2023-24
+Defense,Central,98444613.99,7347102.21,June,2023-24
+Science,West,42556651.76,2277896.72,March,2023-24
+Education,South,81159734.78,5502416.17,January,2023-24
+Energy,Central,98585997.65,5620893.06,September,2023-24
+Energy,North,42969889.59,2868119.61,December,2023-24
+Infrastructure,Central,67371341.54,19841221.97,February,2024-25
+Infrastructure,South,81221185.75,4890737.62,January,2023-24
+Infrastructure,East,49745510.1,3667949.96,March,2023-24
+Education,West,73118319.66,3952118.42,December,2024-25
+Defense,Central,13855587.13,948855.2,April,2024-25
+Health,North,17983398.25,1319805.01,November,2024-25
+Energy,East,86181958.26,6287413.1,January,2024-25
+Education,North,21465533.99,1545523.39,February,2023-24
+Energy,North,10304164.99,698489.76,November,2024-25
+Education,Central,76056073.89,5134121.79,February,2024-25
+Agriculture,East,12197979.08,730435.19,September,2023-24
+Health,North,19217956.87,6188486.24,September,2023-24
+Energy,Central,66812603.29,3920192.44,March,2023-24
+Agriculture,North,96034306.51,4927984.5,May,2023-24
+Science,West,81590291.18,5533513.31,July,2023-24
+Energy,North,22709152.45,1684802.64,December,2023-24
+Energy,North,73795147.15,821186.2,November,2023-24
+Education,West,55472594.91,3499181.65,July,2023-24
+Education,North,24351526.06,1381753.61,June,2024-25
+Energy,South,48289716.75,3521834.28,October,2023-24
+Infrastructure,Central,60402403.06,3310132.15,July,2023-24
+Health,Central,82142140.17,4762133.05,November,2024-25
+Science,West,65292108.56,4841862.51,May,2023-24
+Education,East,86872610.98,4684205.17,July,2023-24
+Defense,East,59465152.15,3991463.85,July,2024-25
+Education,Central,62136002.6,4476643.2,December,2023-24
+Defense,Central,85861373.04,5000949.22,April,2023-24
+Defense,West,56724351.36,3916941.95,May,2024-25
+Science,Central,97582410.23,4920668.65,March,2023-24
+Health,Central,12399164.36,675289.41,September,2024-25
+Agriculture,West,83471988.46,5694726.21,October,2023-24
+Defense,South,31462938.37,2049954.68,September,2023-24
+Education,East,12297190.46,915082.01,May,2024-25
+Science,West,41150063.42,2295541.99,December,2023-24
+Health,West,32844114.93,1929936.37,September,2023-24
+Defense,South,47169521.28,2679812.97,August,2024-25
+Energy,West,40475502.42,2450454.57,December,2023-24
+Infrastructure,North,69101101.11,5140012.74,March,2024-25
+Health,North,33593001.39,1952097.35,August,2024-25
+Health,South,21533479.13,1113243.81,October,2023-24
+Health,East,64472968.7,3804062.21,October,2024-25
+Health,West,84483158.59,5544283.98,May,2023-24
+Health,West,60945218.64,3922882.85,June,2023-24
+Education,South,88781313.72,23977476.95,July,2024-25
+Infrastructure,West,17728947.51,1923661.11,December,2024-25
+Agriculture,West,86219918.6,4650171.43,September,2024-25
+Energy,East,81356602.52,4761937.54,June,2024-25
+Defense,West,58703766.46,3490704.02,September,2024-25
+Infrastructure,North,33251830.23,1966517.27,October,2023-24
+Health,Central,53036944.18,3133601.05,July,2024-25
+Infrastructure,South,63622421.57,3334703.87,November,2023-24
+Agriculture,Central,76809576.98,4858863.12,September,2024-25
+Energy,North,14096410.05,902252.34,April,2024-25
+Health,East,17224572.66,966582.02,December,2023-24
+Defense,Central,54793275.68,3948485.49,August,2024-25
+Infrastructure,Central,51874808.57,3422380.91,August,2023-24
+Education,East,88218753.59,5794282.22,December,2023-24
+Energy,Central,70526313.28,4185400.47,January,2024-25
+Health,East,84264113.91,4555631.81,September,2024-25
+Infrastructure,West,11983276.66,770426.96,June,2024-25
+Health,East,88963544.68,667494.6,August,2023-24
+Health,Central,80999013.64,4331297.8,January,2023-24
+Health,West,86970635.87,6071199.5,August,2023-24
+Agriculture,East,50959039.69,3525831.01,April,2023-24
+Infrastructure,West,65093463.66,3930007.5,June,2023-24
+Science,West,66115248.04,3354672.89,May,2024-25
+Education,South,66127584.43,4854558.74,January,2024-25
+Agriculture,East,78712604.75,4639818.42,June,2023-24
+Agriculture,Central,81237661.43,10007594.06,December,2024-25
+Infrastructure,North,68425650.04,3704655.01,January,2023-24
+Infrastructure,East,57669173.49,3613218.12,August,2023-24
+Infrastructure,Central,60185012.04,4511946.74,February,2024-25
+Education,North,30055730.46,389631.92,April,2024-25
+Defense,Central,12184760.19,788085.17,April,2023-24
+Agriculture,West,27020000.26,1693228.94,August,2024-25
+Science,West,55904680.63,464898.42,May,2024-25
+Agriculture,West,61401248.41,4568054.89,August,2024-25
+Infrastructure,South,66453194.72,7893202.35,April,2024-25
+Education,East,14092723.19,950754.9,October,2024-25
+Health,East,61424180.77,4300169.42,February,2023-24
+Energy,East,29334131.52,1705315.98,May,2024-25
+Education,Central,96526274.2,5162920.58,April,2023-24
+Defense,South,57726836.31,4036151.28,November,2023-24
+Energy,Central,31986127.49,2105946.58,January,2024-25
+Health,West,54519683.26,3437795.48,May,2024-25
+Education,West,26035220.99,1747657.09,August,2023-24
+Infrastructure,East,40934587.52,2572087.37,October,2023-24
+Education,East,48886670.07,3299673.05,October,2023-24
+Energy,South,81521013.3,5847183.48,June,2024-25
+Infrastructure,North,23774087.83,1314711.82,September,2024-25
+Science,West,52686199.24,2892476.64,November,2024-25
+Education,Central,26417010.71,8728487.18,November,2024-25
+Infrastructure,East,68043488.37,3862049.79,May,2023-24
+Defense,South,86536775.01,5143938.6,December,2023-24
+Energy,Central,91368433.7,5820898.39,April,2023-24
+Energy,Central,29828282.98,1701806.46,November,2023-24
+Defense,South,61511836.83,3667543.44,March,2024-25
+Defense,South,61764575.67,616996.68,June,2024-25
+Science,West,23697580.9,1604318.78,December,2023-24
+Science,West,50538437.59,5091852.78,January,2023-24
+Health,West,43313067.47,2222561.19,November,2023-24
+Energy,South,61560054.49,3296031.57,August,2023-24
+Agriculture,North,13989484.47,844321.98,August,2024-25
+Infrastructure,East,63854171.94,664795.27,January,2023-24
+Energy,North,51737919.9,2991580.71,March,2024-25
+Infrastructure,West,92150352.03,6547882.35,March,2023-24
+Defense,Central,42630773.46,2596006.87,June,2024-25
+Science,Central,96961635.37,7117441.5,January,2023-24
+Infrastructure,North,20267107.27,2269667.92,June,2023-24
+Infrastructure,North,72109809.07,5174930.98,February,2023-24
+Infrastructure,West,46522225.2,3308518.01,November,2023-24
+Education,West,20025476.44,1054899.83,April,2023-24
+Infrastructure,West,30067115.88,1632750.52,November,2023-24
+Education,South,25829128.95,2594670.64,February,2024-25
+Agriculture,North,60621594.36,3597180.95,January,2024-25
+Defense,East,49596969.96,3434571.02,October,2023-24
+Defense,Central,41807430.76,5095694.34,May,2024-25
+Education,South,91415892.75,6529210.11,September,2024-25
+Energy,East,30740562.95,294404.88,January,2024-25
+Education,East,19653884.69,994416.64,November,2023-24
+Defense,North,41760362.98,3095766.0,September,2023-24
+Agriculture,West,39651737.12,563939.65,February,2024-25
+Defense,North,89020258.98,6181173.85,December,2024-25
+Science,North,65045685.35,4558699.47,October,2023-24
+Defense,North,94129294.72,5179490.06,December,2023-24
+Energy,South,94089632.66,6238677.65,January,2024-25
+Agriculture,South,30227977.0,288224.98,March,2024-25
+Infrastructure,Central,19248220.8,1152216.31,December,2023-24
+Education,East,71428327.59,4796289.48,June,2024-25
+Education,North,35235705.28,1918933.72,September,2023-24
+Energy,Central,48449753.78,3423950.14,February,2024-25
+Health,Central,74058752.74,5225647.63,June,2023-24
+Health,South,33332789.97,2214817.97,January,2024-25
+Infrastructure,North,95573581.73,6893434.06,July,2024-25
+Defense,West,45992879.81,2313321.84,July,2023-24
+Science,East,14229642.99,890022.29,June,2024-25
+Defense,South,44048452.44,400965.28,March,2024-25
+Defense,South,84906216.72,5453695.59,September,2024-25
+Defense,North,55985554.56,3345874.61,August,2024-25
+Science,South,49570140.04,3675074.62,March,2023-24
+Infrastructure,Central,17580207.92,192440.64,June,2024-25
+Education,West,18092047.32,961603.57,July,2024-25
+Infrastructure,East,47471967.7,3372142.02,January,2023-24
+Infrastructure,East,20739521.31,1385829.97,June,2023-24
+Education,West,66296154.92,4468924.03,July,2023-24
+Science,East,43259760.27,2767902.19,August,2023-24
+Science,East,58145690.51,4250392.06,December,2024-25
+Science,South,76421978.24,4595613.27,June,2023-24
+Science,West,56447017.76,2980873.73,July,2023-24
+Infrastructure,North,25137333.59,1395994.21,March,2024-25
+Education,West,16216346.62,1519493.27,June,2023-24
+Energy,North,58659756.9,6981416.73,December,2024-25
+Infrastructure,North,64580327.85,3363199.37,May,2023-24
+Education,West,54841204.96,3585867.44,April,2024-25
+Science,East,27121156.2,199947.39,December,2024-25
+Energy,South,78894212.73,5530753.51,March,2024-25
+Health,East,48465433.84,3316947.77,July,2023-24
+Health,East,58717849.14,3441197.02,February,2024-25
+Education,East,16508346.75,1181198.91,April,2024-25
+Infrastructure,West,21866500.68,1322630.52,April,2023-24
+Agriculture,Central,35459831.02,2144446.98,November,2024-25
+Health,West,81328660.8,8155956.99,January,2023-24
+Energy,South,76926719.3,7659129.24,January,2024-25
+Health,North,57040438.89,3587160.75,August,2023-24
+Education,Central,89791052.2,5475744.86,June,2024-25
+Defense,Central,83963067.48,9421389.83,December,2024-25
+Science,West,33778740.52,2303879.18,October,2023-24
+Energy,South,69842142.67,3981807.42,February,2024-25
+Defense,North,97654491.3,5064047.84,August,2024-25
+Energy,East,93801571.23,6006989.07,August,2024-25
+Education,Central,79574284.78,4659840.31,March,2023-24
+Education,South,15332583.59,994969.69,September,2024-25
+Science,East,81169169.29,5595759.75,February,2023-24

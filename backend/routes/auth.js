@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   officerId: { type: String, required: true, unique: true },
-  password:  { type: String, required: true },
-  name:      { type: String, required: true },
-  role:      { type: String, default: 'official' },
-  ministry:  { type: String, default: 'Finance Ministry' },
+  password: { type: String, required: true },
+  name: { type: String, required: true },
+  role: { type: String, default: 'official' },
+  ministry: { type: String, default: 'Finance Ministry' },
 });
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 

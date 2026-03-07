@@ -16,8 +16,8 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window
   max: 100, // Limit each IP to 100 requests per window
   message: 'Too many requests from this IP, please try again after 15 minutes.',
-  standardHeaders: true, 
-  legacyHeaders: false, 
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use('/api/', limiter); // Apply to all our MongoDB access routes
 
@@ -173,7 +173,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

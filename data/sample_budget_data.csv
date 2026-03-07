@@ -1,0 +1,16 @@
+district,department,scheme,allocated_budget,spent_budget,month,financial_year
+Lucknow,Health,Primary Health Centers,5000000,4200000,September,2024-25
+Lucknow,Education,Smart Class Initiative,3000000,1200000,September,2024-25
+Lucknow,Roads,Highway Maintenance,8000000,9500000,September,2024-25
+Varanasi,Health,Hospital Upgrade,6000000,5800000,September,2024-25
+Varanasi,Education,Girl Child Scholarship,2000000,1800000,September,2024-25
+Varanasi,Roads,City Bridge Repair,4500000,1000000,September,2024-25
+Kanpur,Health,Vaccination Drive,4000000,3800000,September,2024-25
+Kanpur,Education,Teacher Training,2500000,2400000,September,2024-25
+Kanpur,Roads,Flyover Construction,12000000,15000000,September,2024-25
+Agra,Health,Medical Supplies,3500000,3200000,September,2024-25
+Agra,Education,Library Digitalization,1500000,200000,September,2024-25
+Agra,Roads,Parking Management,2800000,2700000,September,2024-25
+Prayagraj,Health,Ambulance Service,4200000,4000000,September,2024-25
+Prayagraj,Education,Uniform Distribution,3000000,2900000,September,2024-25
+Prayagraj,Roads,Street Lighting,2000000,2100000,September,2024-25
