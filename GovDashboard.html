@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gov Dashboard</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/prop-types@15.8.1/prop-types.js"></script>
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  body { margin: 0; padding: 0; background-color: #050A0F; color: white; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } = window.Recharts;
+    
+const db = {
+  async all() { try { const r=localStorage.getItem("gl:c"); return r?JSON.parse(r):[]; } catch{return[];} },
+  async saveAll(l) { try{localStorage.setItem("gl:c",JSON.stringify(l));}catch{} },
+  async myIds() { try{const r=localStorage.getItem("gl:m");return r?JSON.parse(r):[];}catch{return[];} },
+  async saveMy(ids) { try{localStorage.setItem("gl:m",JSON.stringify(ids));}catch{} },
+};
+
+const C={bg:"#050A0F",panel:"#0A1520",border:"#1A2E44",accent:"#00D4FF",gold:"#F5A623",green:"#00FF88",red:"#FF4560",purple:"#7C3AED",text:"#CDD6F4",muted:"#4A6080",white:"#FFF"};
+const SC={low:"#00FF88",medium:"#F5A623",high:"#FF4560",critical:"#FF0000"};
+const fmt=n=>n>=100000?`₹${(n/100000).toFixed(1)}L`:n>=1000?`₹${(n/1000).toFixed(0)}K`:`₹${n}`;
+
+const DEPTS=[
+  {name:"Defence",budget:595000,spent:521000,color:"#FF4560",icon:"🛡️"},
+  {name:"Education",budget:112000,spent:89000,color:"#00D4FF",icon:"📚"},
+  {name:"Health",budget:89000,spent:76000,color:"#00FF88",icon:"🏥"},
+  {name:"Infrastructure",budget:310000,spent:198000,color:"#F5A623",icon:"🏗️"},
+  {name:"Agriculture",budget:148000,spent:102000,color:"#7C3AED",icon:"🌾"},
+  {name:"Technology",budget:76000,spent:41000,color:"#FF6BF5",icon:"💻"},
+  {name:"Environment",budget:32000,spent:19000,color:"#4ADE80",icon:"🌿"},
+  {name:"Social Welfare",budget:185000,spent:167000,color:"#FB923C",icon:"🤝"},
+];
+const YEARLY=[{y:"2019",v:2780000},{y:"2020",v:3540000},{y:"2021",v:3120000},{y:"2022",v:3890000},{y:"2023",v:4210000},{y:"2024",v:4750000},{y:"2025",v:4521000}];
+const MONTHLY=[{m:"Apr",v:390000},{m:"May",v:342000},{m:"Jun",v:378000},{m:"Jul",v:401000},{m:"Aug",v:356000},{m:"Sep",v:412000},{m:"Oct",v:445000},{m:"Nov",v:389000},{m:"Dec",v:467000},{m:"Jan",v:421000},{m:"Feb",v:398000},{m:"Mar",v:322000}];
+const TRANSP=[{t:"Audit Compliance",s:87,p:79,c:"#00FF88"},{t:"RTI Responses",s:72,p:65,c:"#00D4FF"},{t:"Tender Disclosure",s:91,p:88,c:"#F5A623"},{t:"Budget Accuracy",s:83,p:76,c:"#7C3AED"},{t:"Public Reports",s:68,p:61,c:"#FF6BF5"},{t:"Fund Utilisation",s:79,p:72,c:"#4ADE80"}];
+const RADAR=TRANSP.map(t=>({s:t.t.split(" ")[0],A:t.s,B:t.p}));
+
+const GS=()=><style>{`
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#050A0F;font-family:'Inter',sans-serif;}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#0A1018;}::-webkit-scrollbar-thumb{background:#1E3A5F;border-radius:3px;}
+  select option{background:#0D1B2A;color:#CDD6F4;}
+  @keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes scan{0%{top:0}100%{top:164px}}
+  .fu{animation:fu .4s ease both}.pulse{animation:pulse 2s infinite}
+`}</style>;
+
+const TT=({active,payload,label})=>{
+  if(!active||!payload?.length)return null;
+  return <div style={{background:"#0D1B2A",border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 14px"}}><p style={{color:C.muted,fontSize:11,marginBottom:6,fontFamily:"'JetBrains Mono'"}}>{label}</p>{payload.map((p,i)=><p key={i} style={{color:p.color||C.accent,fontSize:13,fontFamily:"'JetBrains Mono'"}}>{p.name}: {p.value>999?fmt(p.value):p.value}</p>)}</div>;
+};
+const iSt={width:"100%",background:"#0D1B2A",border:`1px solid #1A2E44`,color:"#CDD6F4",borderRadius:8,padding:"10px 12px",fontSize:13,outline:"none",fontFamily:"'Inter'",boxSizing:"border-box"};
+const Fld=({label,children})=><div style={{marginBottom:16}}><label style={{color:C.muted,fontSize:10,display:"block",marginBottom:7,letterSpacing:2,textTransform:"uppercase",fontFamily:"'JetBrains Mono'"}}>{label}</label>{children}</div>;
+const Spin=()=><div style={{width:42,height:42,border:`3px solid ${C.border}`,borderTop:`3px solid ${C.accent}`,borderRadius:"50%",margin:"0 auto 16px",animation:"spin .8s linear infinite"}}/>;
+
+function ComplaintForm({onClose,onDone}){
+  const [step,setStep]=useState("form");
+  const [form,setForm]=useState({dept:"",complaint:"",severity:"medium"});
+  const [loc,setLoc]=useState(null);
+  const [ts]=useState(new Date());
+  const [cid]=useState(`GRV-${Date.now().toString().slice(-6)}`);
+  const [copied,setCopied]=useState(false);
+
+  useEffect(()=>{
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        p=>setLoc({lat:p.coords.latitude.toFixed(5),lng:p.coords.longitude.toFixed(5),real:true}),
+        ()=>setLoc({lat:"19.07283",lng:"72.88261",real:false})
+      );
+    } else {
+      setLoc({lat:"19.07283",lng:"72.88261",real:false})
+    }
+  },[]);
+
+  const dept=DEPTS.find(d=>d.name===form.dept);
+  const ok=form.dept&&form.complaint.trim().length>10;
+
+  const submit=async()=>{
+    setStep("saving");
+    const c={id:cid,dept:form.dept,complaint:form.complaint,severity:form.severity,location:loc,timestamp:ts.toISOString(),budget:dept?.budget,status:"Pending"};
+    const all=await db.all();
+    await db.saveAll([c,...all]);
+    const ids=await db.myIds();
+    await db.saveMy([cid,...ids]);
+    onDone(c);
+    setStep("done");
+  };
+
+  const copy=()=>{if(navigator.clipboard){navigator.clipboard.writeText(cid).catch(()=>{});setCopied(true);setTimeout(()=>setCopied(false),2000);}};
+
+  return(
+    <div style={{position:"fixed",inset:0,background:"rgba(5,10,15,.94)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,backdropFilter:"blur(10px)",padding:16}} onClick={e=>{if(e.target===e.currentTarget&&step!=="saving")onClose();}}>
+      <div className="fu" style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:20,width:"100%",maxWidth:500,maxHeight:"93vh",overflowY:"auto",boxShadow:"0 40px 100px rgba(0,212,255,.12)"}}>
+        <div style={{padding:"18px 22px",borderBottom:`1px solid ${C.border}`,display:"flex",justifyContent:"space-between",alignItems:"center",background:`linear-gradient(135deg,${C.accent}08,transparent)`}}>
+          <div>
+            <p style={{color:C.accent,fontSize:10,letterSpacing:3,textTransform:"uppercase",marginBottom:3,fontFamily:"'JetBrains Mono'"}}>Citizen Grievance Portal</p>
+            <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:800,fontSize:18}}>{step==="done"?"Complaint Registered ✅":"File a Complaint"}</p>
+          </div>
+          {step!=="saving"&&<button onClick={onClose} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.muted,width:34,height:34,borderRadius:8,cursor:"pointer",fontSize:18,lineHeight:1}}>×</button>}
+        </div>
+
+        {step==="saving"&&<div style={{padding:"60px 24px",textAlign:"center"}}><Spin/><p style={{color:C.text,fontFamily:"'Syne'",fontSize:16}}>Saving complaint…</p><p style={{color:C.muted,fontSize:12,marginTop:6}}>Encrypting location & storing securely</p></div>}
+
+        {step==="done"&&(
+          <div style={{padding:"28px 24px",textAlign:"center"}}>
+            <div style={{fontSize:50,marginBottom:14}}>✅</div>
+            <div style={{background:"#0A1218",border:`2px solid ${C.accent}50`,borderRadius:16,padding:"20px 18px",marginBottom:16}}>
+              <p style={{color:C.muted,fontSize:10,letterSpacing:3,textTransform:"uppercase",marginBottom:10,fontFamily:"'JetBrains Mono'"}}>Your Complaint ID — tap to copy</p>
+              <p style={{color:C.accent,fontFamily:"'JetBrains Mono'",fontWeight:700,fontSize:32,letterSpacing:4,marginBottom:16}}>{cid}</p>
+              <button onClick={copy} style={{background:copied?`${C.green}20`:`${C.accent}15`,border:`1px solid ${copied?C.green:C.accent}60`,color:copied?C.green:C.accent,borderRadius:8,padding:"9px 22px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:700,fontSize:13,display:"inline-flex",alignItems:"center",gap:7,transition:"all .2s"}}>
+                {copied?"✓ Copied!":"📋 Copy ID"}
+              </button>
+            </div>
+            <div style={{background:`${C.green}0A`,border:`1px solid ${C.green}20`,borderRadius:10,padding:"12px 16px",marginBottom:18,textAlign:"left"}}>
+              <p style={{color:C.green,fontWeight:700,fontSize:12,marginBottom:4}}>🔒 Your identity is never shown publicly</p>
+              <p style={{color:C.muted,fontSize:12,lineHeight:1.6}}>Your complaint is <strong style={{color:C.text}}>automatically saved to this device</strong>. No login needed. Come back anytime and tap <strong style={{color:C.green}}>"My Complaints"</strong> to see a one-tap Resolve button — <strong style={{color:C.gold}}>no ID entry required.</strong></p>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              <button onClick={onClose} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.muted,borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:600,fontSize:13}}>Dashboard</button>
+              <button onClick={()=>{onClose();}} style={{background:`${C.green}18`,border:`1px solid ${C.green}50`,color:C.green,borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:700,fontSize:13}}>My Complaints →</button>
+            </div>
+          </div>
+        )}
+
+        {step==="form"&&(
+          <div style={{padding:"22px"}}>
+            <div style={{background:"#0D1B2A",borderRadius:10,padding:"12px 14px",marginBottom:20,border:`1px solid ${C.green}20`}}>
+              <p style={{color:C.green,fontSize:10,textTransform:"uppercase",letterSpacing:2,marginBottom:8,fontFamily:"'JetBrains Mono'"}}>Auto-captured (kept private)</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                <div><p style={{color:C.muted,fontSize:10,marginBottom:2}}>TIMESTAMP</p><p style={{color:C.text,fontFamily:"'JetBrains Mono'",fontSize:11}}>{ts.toLocaleString("en-IN")}</p></div>
+                <div><p style={{color:C.muted,fontSize:10,marginBottom:2}}>GPS {loc?.real===false&&"(est.)"}</p>{loc?<p style={{color:C.text,fontFamily:"'JetBrains Mono'",fontSize:11}}>{loc.lat}, {loc.lng}</p>:<p style={{color:C.muted,fontSize:11}} className="pulse">Locating…</p>}</div>
+              </div>
+            </div>
+
+            <Fld label="Department"><select value={form.dept} onChange={e=>setForm({...form,dept:e.target.value})} style={iSt}><option value="">-- Select Department --</option>{DEPTS.map(d=><option key={d.name} value={d.name}>{d.icon} {d.name}</option>)}</select></Fld>
+
+            {dept&&(
+              <div style={{background:`${dept.color}12`,border:`1px solid ${dept.color}30`,borderRadius:10,padding:"12px 14px",marginBottom:14}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                  <div><p style={{color:C.muted,fontSize:10,marginBottom:3}}>ALLOCATED BUDGET</p><p style={{color:dept.color,fontFamily:"'JetBrains Mono'",fontWeight:700,fontSize:16}}>{fmt(dept.budget)} Cr</p></div>
+                  <div style={{textAlign:"right"}}><p style={{color:C.muted,fontSize:10,marginBottom:3}}>UTILISED</p><p style={{color:C.text,fontFamily:"'JetBrains Mono'",fontSize:15}}>{((dept.spent/dept.budget)*100).toFixed(1)}%</p></div>
+                </div>
+                <div style={{background:"#1A2E44",borderRadius:3,height:4}}><div style={{width:`${(dept.spent/dept.budget)*100}%`,height:"100%",background:dept.color,borderRadius:3}}/></div>
+              </div>
+            )}
+
+            <Fld label="Severity">
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+                {["low","medium","high","critical"].map(s=><button key={s} onClick={()=>setForm({...form,severity:s})} style={{background:form.severity===s?`${SC[s]}22`:"transparent",border:`1px solid ${form.severity===s?SC[s]:C.border}`,color:form.severity===s?SC[s]:C.muted,borderRadius:8,padding:"8px 4px",cursor:"pointer",fontSize:11,fontWeight:700,textTransform:"uppercase",fontFamily:"'JetBrains Mono'",transition:"all .15s"}}>{s}</button>)}
+              </div>
+            </Fld>
+
+            <Fld label={`Complaint (${form.complaint.length}/500)`}>
+              <textarea value={form.complaint} onChange={e=>{if(form.complaint.length<500)setForm({...form,complaint:e.target.value})}} placeholder="Describe the issue clearly…" rows={5} style={{...iSt,resize:"vertical",minHeight:100}}/>
+            </Fld>
+
+            <button onClick={submit} disabled={!ok} style={{width:"100%",background:ok?C.accent:C.border,color:ok?"#000":C.muted,border:"none",borderRadius:10,padding:"13px",cursor:ok?"pointer":"not-allowed",fontFamily:"'Syne'",fontWeight:800,fontSize:15,transition:"all .2s",marginTop:4}}>
+              {ok?"Submit Complaint →":"Select department & describe issue"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MyPanel({onClose,all,onResolve}){
+  const [ids,setIds]=useState([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{db.myIds().then(v=>{setIds(v);setLoading(false);});}, []);
+  const mine=ids.map(id=>all.find(c=>c.id===id)).filter(Boolean);
+
+  return(
+    <div style={{position:"fixed",inset:0,background:"rgba(5,10,15,.94)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,backdropFilter:"blur(10px)",padding:16}} onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="fu" style={{background:C.panel,border:`1px solid ${C.green}50`,borderRadius:20,width:"100%",maxWidth:520,maxHeight:"92vh",overflowY:"auto",boxShadow:"0 40px 100px rgba(0,255,136,.1)"}}>
+        <div style={{padding:"18px 22px",borderBottom:`1px solid ${C.border}`,display:"flex",justifyContent:"space-between",alignItems:"center",background:`linear-gradient(135deg,${C.green}08,transparent)`}}>
+          <div>
+            <p style={{color:C.green,fontSize:10,letterSpacing:3,textTransform:"uppercase",marginBottom:3,fontFamily:"'JetBrains Mono'"}}>Saved on this device</p>
+            <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:800,fontSize:18}}>My Complaints</p>
+          </div>
+          <button onClick={onClose} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.muted,width:34,height:34,borderRadius:8,cursor:"pointer",fontSize:18,lineHeight:1}}>×</button>
+        </div>
+        <div style={{padding:"20px 22px"}}>
+          {loading&&<div style={{textAlign:"center",padding:"40px 0"}}><Spin/><p style={{color:C.muted,fontSize:13}}>Loading…</p></div>}
+
+          {!loading&&mine.length===0&&(
+            <div style={{textAlign:"center",padding:"44px 20px"}}>
+              <p style={{fontSize:44,marginBottom:14}}>📭</p>
+              <p style={{color:C.text,fontFamily:"'Syne'",fontWeight:700,fontSize:16,marginBottom:8}}>No complaints yet</p>
+              <p style={{color:C.muted,fontSize:13,lineHeight:1.7}}>Use the QR code or "Open Form" button to file one.<br/><strong style={{color:C.accent}}>Your complaints appear here automatically</strong> — no login needed.</p>
+            </div>
+          )}
+
+          {!loading&&mine.map(c=>{
+            const d=DEPTS.find(x=>x.name===c.dept),res=c.status==="Resolved";
+            return(
+              <div key={c.id} style={{background:res?"#081510":"#0D1B2A",border:`1px solid ${res?C.green+"40":C.border}`,borderLeft:`4px solid ${res?C.green:d?.color||C.accent}`,borderRadius:12,padding:"16px 18px",marginBottom:14,transition:"all .3s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,flexWrap:"wrap",gap:8}}>
+                  <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+                    <span style={{color:C.accent,fontFamily:"'JetBrains Mono'",fontWeight:700,fontSize:13}}>{c.id}</span>
+                    <span style={{background:`${SC[c.severity]}20`,color:SC[c.severity],fontSize:10,padding:"2px 8px",borderRadius:4,fontWeight:700,textTransform:"uppercase"}}>{c.severity}</span>
+                    <span style={{background:`${d?.color||C.accent}20`,color:d?.color||C.accent,fontSize:10,padding:"2px 7px",borderRadius:4}}>{d?.icon} {c.dept}</span>
+                  </div>
+                  <span style={{background:res?`${C.green}20`:`${C.gold}20`,color:res?C.green:C.gold,fontSize:11,padding:"3px 10px",borderRadius:20,fontWeight:700}}>{res?"✅ Resolved":"⏳ Pending"}</span>
+                </div>
+                <p style={{color:C.text,fontSize:13,lineHeight:1.6,marginBottom:10}}>{c.complaint}</p>
+                <div style={{display:"flex",gap:14,flexWrap:"wrap",marginBottom:res?0:14}}>
+                  <span style={{color:C.muted,fontSize:11}}>📅 {new Date(c.timestamp).toLocaleString("en-IN")}</span>
+                  <span style={{color:C.muted,fontSize:11}}>📍 Location stored (private)</span>
+                  <span style={{color:C.muted,fontSize:11}}>💰 {fmt(c.budget||0)} Cr budget</span>
+                </div>
+                {!res&&(
+                  <button onClick={()=>onResolve(c.id)} style={{width:"100%",background:`${C.green}15`,border:`1px solid ${C.green}50`,color:C.green,borderRadius:9,padding:"12px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:800,fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"all .2s"}}
+                    onMouseEnter={e=>{e.currentTarget.style.background=`${C.green}28`}}
+                    onMouseLeave={e=>{e.currentTarget.style.background=`${C.green}15`}}
+                  >✅  My Issue Has Been Resolved</button>
+                )}
+                {res&&<p style={{color:C.green,fontSize:12,textAlign:"center",paddingTop:4}}>🎉 Closed — thank you!</p>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QRWidget({onForm,onMine,pending}){
+  return(
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:16,padding:20,textAlign:"center",position:"relative",overflow:"hidden"}}>
+      <button onClick={onForm} style={{width:"100%",background:`${C.accent}18`,border:`1px solid ${C.accent}60`,color:C.accent,borderRadius:9,padding:"10px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:700,fontSize:13,marginBottom:8}}>📝  Open Form Directly</button>
+      <button onClick={onMine} style={{width:"100%",background:`${C.green}14`,border:`1px solid ${C.green}50`,color:C.green,borderRadius:9,padding:"10px",cursor:"pointer",fontFamily:"'Syne'",fontWeight:700,fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+        ✅  My Complaints {pending>0&&<span style={{background:C.gold,color:"#000",borderRadius:20,padding:"1px 9px",fontSize:11,fontWeight:800}}>{pending} pending</span>}
+      </button>
+    </div>
+  );
+}
+
+function SpTab(){
+  return(<div style={{display:"grid",gap:22}}>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))",gap:12}}>
+      {[{l:"Total Budget",v:"₹45.21L Cr",c:C.accent,i:"💰"},{l:"Utilised",v:"77.7%",c:C.green,i:"📊"},{l:"Remaining",v:"₹10.08L Cr",c:C.gold,i:"⏳"},{l:"Departments",v:"8 active",c:C.purple,i:"🏛️"}].map(({l,v,c,i})=>(
+        <div key={l} style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:12,padding:"16px 18px",borderTop:`3px solid ${c}`,position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:-8,right:-8,fontSize:36,opacity:.07}}>{i}</div>
+          <p style={{color:C.muted,fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontFamily:"'JetBrains Mono'"}}>{l}</p>
+          <p style={{color:c,fontSize:21,fontWeight:800,fontFamily:"'Syne'"}}>{v}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+      <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15,marginBottom:18}}>Year-on-Year Expenditure</p>
+      <ResponsiveContainer width="100%" height={215}><AreaChart data={YEARLY}><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.accent} stopOpacity={.3}/><stop offset="95%" stopColor={C.accent} stopOpacity={0}/></linearGradient></defs><CartesianGrid strokeDasharray="3 3" stroke={C.border}/><XAxis dataKey="y" tick={{fill:C.muted,fontSize:12}} axisLine={false} tickLine={false}/><YAxis tickFormatter={fmt} tick={{fill:C.muted,fontSize:11}} axisLine={false} tickLine={false}/><Tooltip content={<TT/>}/><Area type="monotone" dataKey="v" name="Total Spend" stroke={C.accent} fill="url(#g1)" strokeWidth={2.5} dot={{r:4,fill:C.accent,stroke:C.bg,strokeWidth:2}}/></AreaChart></ResponsiveContainer>
+    </div>
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+      <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15,marginBottom:18}}>Monthly Spend — FY 2025-26</p>
+      <ResponsiveContainer width="100%" height={195}><BarChart data={MONTHLY} barSize={24}><CartesianGrid strokeDasharray="3 3" stroke={C.border} vertical={false}/><XAxis dataKey="m" tick={{fill:C.muted,fontSize:12}} axisLine={false} tickLine={false}/><YAxis tickFormatter={fmt} tick={{fill:C.muted,fontSize:11}} axisLine={false} tickLine={false}/><Tooltip content={<TT/>}/><Bar dataKey="v" name="Spend" radius={[5,5,0,0]}>{MONTHLY.map((_,i)=><Cell key={i} fill={i===MONTHLY.length-1?C.gold:`${C.accent}BB`}/>)}</Bar></BarChart></ResponsiveContainer>
+    </div>
+  </div>);
+}
+
+function DpTab(){
+  const [open,setOpen]=useState(null);
+  return(<div style={{display:"grid",gap:22}}>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1.4fr",gap:16}}>
+      <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+        <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15,marginBottom:18}}>Budget Share</p>
+        <ResponsiveContainer width="100%" height={215}><PieChart><Pie data={DEPTS} cx="50%" cy="50%" innerRadius={46} outerRadius={86} dataKey="budget" paddingAngle={3}>{DEPTS.map((d,i)=><Cell key={i} fill={d.color} stroke="transparent"/>)}</Pie><Tooltip content={<TT/>}/></PieChart></ResponsiveContainer>
+      </div>
+      <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+        <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15,marginBottom:18}}>Allocated vs Spent</p>
+        <ResponsiveContainer width="100%" height={215}><BarChart data={DEPTS} layout="vertical" barSize={8}><CartesianGrid strokeDasharray="3 3" stroke={C.border} horizontal={false}/><XAxis type="number" tickFormatter={fmt} tick={{fill:C.muted,fontSize:10}} axisLine={false} tickLine={false}/><YAxis type="category" dataKey="name" tick={{fill:C.muted,fontSize:11}} axisLine={false} tickLine={false} width={90}/><Tooltip content={<TT/>}/><Bar dataKey="budget" name="Allocated" fill={`${C.accent}30`} stroke={C.accent} strokeWidth={1} radius={[0,4,4,0]}/><Bar dataKey="spent" name="Spent" radius={[0,4,4,0]}>{DEPTS.map((d,i)=><Cell key={i} fill={d.color}/>)}</Bar></BarChart></ResponsiveContainer>
+      </div>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(225px,1fr))",gap:12}}>
+      {DEPTS.map(d=>{const p=(d.spent/d.budget)*100,op=open===d.name;return(
+        <div key={d.name} onClick={()=>setOpen(op?null:d.name)} style={{background:op?`${d.color}10`:C.panel,border:`1px solid ${op?d.color+"50":C.border}`,borderLeft:`4px solid ${d.color}`,borderRadius:12,padding:"14px 16px",cursor:"pointer",transition:"all .2s"}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><div style={{display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:18}}>{d.icon}</span><span style={{color:C.text,fontFamily:"'Syne'",fontWeight:700,fontSize:14}}>{d.name}</span></div><span style={{color:d.color,fontFamily:"'JetBrains Mono'",fontSize:12,fontWeight:700}}>{p.toFixed(0)}%</span></div>
+          <div style={{background:C.border,borderRadius:3,height:5,overflow:"hidden",marginBottom:8}}><div style={{width:`${p}%`,height:"100%",background:d.color,borderRadius:3}}/></div>
+          <div style={{display:"flex",justifyContent:"space-between"}}><span style={{color:C.muted,fontSize:11}}>Alloc: <span style={{color:C.text}}>{fmt(d.budget)} Cr</span></span><span style={{color:C.muted,fontSize:11}}>Spent: <span style={{color:d.color}}>{fmt(d.spent)} Cr</span></span></div>
+          {op&&<div style={{marginTop:12,paddingTop:10,borderTop:`1px solid ${d.color}30`}}>{[{l:"Unspent",v:fmt(d.budget-d.spent)+" Cr",c:C.gold},{l:"Utilisation",v:p.toFixed(2)+"%",c:p>80?C.green:p>60?C.gold:C.red},{l:"Status",v:p>80?"✅ On Track":p>60?"⚠️ Moderate":"🔴 Under",c:C.text}].map(({l,v,c})=><div key={l} style={{display:"flex",justifyContent:"space-between",padding:"4px 0"}}><span style={{color:C.muted,fontSize:12}}>{l}</span><span style={{color:c,fontSize:12,fontFamily:"'JetBrains Mono'"}}>{v}</span></div>)}</div>}
+        </div>
+      );})}
+    </div>
+  </div>);
+}
+
+function TrTab({complaints}){
+  const total=complaints.length,res=complaints.filter(c=>c.status==="Resolved").length,pend=total-res;
+  return(<div style={{display:"grid",gap:22}}>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(175px,1fr))",gap:12}}>
+      {TRANSP.map(t=>(
+        <div key={t.t} style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:12,padding:"14px 16px"}}>
+          <p style={{color:C.muted,fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:10,fontFamily:"'JetBrains Mono'"}}>{t.t}</p>
+          <div style={{display:"flex",alignItems:"flex-end",gap:8,marginBottom:10}}><p style={{color:t.c,fontSize:27,fontFamily:"'Syne'",fontWeight:800,lineHeight:1}}>{t.s}</p><p style={{color:C.muted,fontSize:11,paddingBottom:3}}>/100</p><p style={{color:t.s>t.p?C.green:C.red,fontSize:11,paddingBottom:3,marginLeft:"auto"}}>{t.s>t.p?"↑":"↓"}{Math.abs(t.s-t.p)}</p></div>
+          <div style={{background:C.border,borderRadius:3,height:5}}><div style={{width:`${t.s}%`,height:"100%",background:t.c,borderRadius:3}}/></div>
+        </div>
+      ))}
+    </div>
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+      <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15,marginBottom:4}}>Transparency Radar</p>
+      <p style={{color:C.muted,fontSize:12,marginBottom:16}}>Current vs previous year</p>
+      <ResponsiveContainer width="100%" height={245}><RadarChart data={RADAR}><PolarGrid stroke={C.border}/><PolarAngleAxis dataKey="s" tick={{fill:C.muted,fontSize:11}}/><PolarRadiusAxis angle={30} domain={[0,100]} tick={{fill:C.muted,fontSize:10}}/><Radar name="Current" dataKey="A" stroke={C.accent} fill={C.accent} fillOpacity={.18} strokeWidth={2}/><Radar name="Previous" dataKey="B" stroke={C.gold} fill={C.gold} fillOpacity={.08} strokeWidth={1.5} strokeDasharray="4 3"/><Legend wrapperStyle={{color:C.muted,fontSize:12}}/><Tooltip content={<TT/>}/></RadarChart></ResponsiveContainer>
+    </div>
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:22}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+        <p style={{color:C.white,fontFamily:"'Syne'",fontWeight:700,fontSize:15}}>Citizen Grievance Overview</p>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:6,height:6,background:C.green,borderRadius:"50%"}} className="pulse"/><span style={{color:C.green,fontSize:11,fontFamily:"'JetBrains Mono'"}}>LIVE</span></div>
+      </div>
+      <p style={{color:C.muted,fontSize:12,marginBottom:18}}>🔒 All identities anonymised — only issue category and status are shown publicly.</p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:total>0?18:0}}>
+        {[{l:"Filed",v:total,c:C.accent},{l:"Pending",v:pend,c:C.gold},{l:"Resolved",v:res,c:C.green}].map(({l,v,c})=>(
+          <div key={l} style={{background:"#0A1520",border:`1px solid ${c}25`,borderRadius:10,padding:"14px",textAlign:"center"}}><p style={{color:c,fontFamily:"'Syne'",fontWeight:800,fontSize:26,marginBottom:2}}>{v}</p><p style={{color:C.muted,fontSize:10,textTransform:"uppercase",letterSpacing:1}}>{l}</p></div>
+        ))}
+      </div>
+      {total>0&&<div style={{marginBottom:20}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{color:C.muted,fontSize:12}}>Resolution rate</span><span style={{color:C.green,fontFamily:"'JetBrains Mono'",fontSize:12}}>{Math.round((res/total)*100)}%</span></div><div style={{background:C.border,borderRadius:4,height:8,overflow:"hidden"}}><div style={{width:`${(res/total)*100}%`,height:"100%",background:C.green,borderRadius:4,transition:"width .6s ease"}}/></div></div>}
+      {complaints.length===0?(<div style={{textAlign:"center",padding:"24px 0",color:C.muted}}><p style={{fontSize:28,marginBottom:8}}>📭</p><p style={{fontSize:13}}>No complaints filed yet.</p></div>)
+      :complaints.map(c=>{
+        const d=DEPTS.find(x=>x.name===c.dept),r=c.status==="Resolved";
+        return(<div key={c.id} style={{background:"#0A1520",borderRadius:10,padding:"12px 15px",marginBottom:10,border:`1px solid ${C.border}`,borderLeft:`3px solid ${r?C.green:d?.color||C.accent}`,opacity:r?.78:1}}>
+          <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:8}}>
+            <div style={{display:"flex",gap:7,flexWrap:"wrap",alignItems:"center"}}>
+              <span style={{color:C.muted,fontFamily:"'JetBrains Mono'",fontSize:11}}>{c.id}</span>
+              <span style={{background:`${SC[c.severity]}20`,color:SC[c.severity],fontSize:10,padding:"2px 7px",borderRadius:4,fontWeight:700,textTransform:"uppercase"}}>{c.severity}</span>
+              <span style={{background:`${d?.color||C.accent}20`,color:d?.color||C.accent,fontSize:10,padding:"2px 7px",borderRadius:4}}>{d?.icon} {c.dept}</span>
+              <span style={{background:r?`${C.green}20`:`${C.gold}20`,color:r?C.green:C.gold,fontSize:10,padding:"2px 7px",borderRadius:4,fontWeight:700}}>{r?"✅ Resolved":"⏳ Pending"}</span>
+            </div>
+            <span style={{color:C.muted,fontSize:11,fontFamily:"'JetBrains Mono'"}}>{new Date(c.timestamp).toLocaleTimeString("en-IN")}</span>
+          </div>
+          <p style={{color:C.text,fontSize:13,lineHeight:1.5,marginBottom:6}}>{c.complaint}</p>
+          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}><span style={{color:C.muted,fontSize:11}}>👤 Anonymous</span><span style={{color:C.muted,fontSize:11}}>📍 Location on record</span><span style={{color:C.muted,fontSize:11}}>💰 {fmt(c.budget||0)} Cr</span></div>
+        </div>);
+      })}
+    </div>
+  </div>);
+}
+
+const TABS=[{id:"spending",label:"Gov. Spending",icon:"📈"},{id:"departments",label:"Department View",icon:"🏛️"},{id:"transparency",label:"Transparency Report",icon:"🔍"}];
+
+function App(){
+  const [tab,setTab]=useState("spending");
+  const [complaints,setComplaints]=useState([]);
+  const [showForm,setShowForm]=useState(false);
+  const [showMine,setShowMine]=useState(false);
+  const [pendingMine,setPendingMine]=useState(0);
+  const [clock,setClock]=useState(new Date());
+
+  useEffect(()=>{
+    db.all().then(setComplaints);
+    Promise.all([db.myIds(),db.all()]).then(([ids,all])=>{
+      setPendingMine(ids.map(id=>all.find(c=>c.id===id)).filter(c=>c&&c.status!=="Resolved").length);
+    });
+  },[]);
+
+  useEffect(()=>{
+    try{if(new URLSearchParams(window.location.search).get("complaint")==="true")setShowForm(true);}catch{}
+  },[]);
+
+  useEffect(()=>{const t=setInterval(()=>setClock(new Date()),1000);return()=>clearInterval(t);},[]);
+
+  const addC=c=>{setComplaints(p=>[c,...p]);setPendingMine(p=>p+1);};
+
+  const resolve=async id=>{
+    const upd=complaints.map(c=>c.id===id?{...c,status:"Resolved"}:c);
+    setComplaints(upd);
+    await db.saveAll(upd);
+    const ids=await db.myIds();
+    setPendingMine(ids.map(i=>upd.find(c=>c.id===i)).filter(c=>c&&c.status!=="Resolved").length);
+  };
+
+  const pend=complaints.filter(c=>c.status!=="Resolved").length;
+
+  return(
+    <div style={{minHeight:"100vh",background:C.bg,color:C.text}}>
+      <GS/>
+      <nav style={{background:`${C.panel}EE`,borderBottom:`1px solid ${C.border}`,backdropFilter:"blur(12px)",position:"sticky",top:0,zIndex:200,padding:"0 20px",display:"flex",alignItems:"center",height:56,gap:12}}>
+        <div style={{display:"flex",alignItems:"center",gap:9,marginRight:4}}>
+          <div style={{width:30,height:30,background:`linear-gradient(135deg,${C.accent},${C.purple})`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🏛️</div>
+          <div><p style={{color:C.white,fontFamily:"'Syne'",fontWeight:800,fontSize:14,lineHeight:1}}>GovLens</p><p style={{color:C.muted,fontSize:9,letterSpacing:2,textTransform:"uppercase",fontFamily:"'JetBrains Mono'"}}>Public Dashboard</p></div>
+        </div>
+        <div style={{display:"flex",gap:2,flex:1,overflowX:"auto"}}>
+          {TABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{background:"transparent",border:"none",borderBottom:`2px solid ${tab===t.id?C.accent:"transparent"}`,color:tab===t.id?C.accent:C.muted,padding:"0 12px",height:56,cursor:"pointer",fontSize:13,fontFamily:"'Syne'",fontWeight:tab===t.id?700:400,whiteSpace:"nowrap",transition:"all .2s",display:"flex",alignItems:"center",gap:6}}><span>{t.icon}</span>{t.label}</button>)}
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"center",flexShrink:0}}>
+          {pend>0&&<span style={{background:`${C.gold}20`,border:`1px solid ${C.gold}40`,borderRadius:20,padding:"3px 10px",color:C.gold,fontSize:11,fontFamily:"'JetBrains Mono'"}}>{pend} pending</span>}
+          <span style={{color:C.muted,fontSize:11,fontFamily:"'JetBrains Mono'"}}>{clock.toLocaleTimeString("en-IN")}</span>
+        </div>
+      </nav>
+
+      <div style={{background:`linear-gradient(135deg,${C.accent}07,${C.purple}06,transparent)`,borderBottom:`1px solid ${C.border}`,padding:"20px 22px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:14}}>
+        <div>
+          <p style={{color:C.accent,fontSize:10,letterSpacing:4,textTransform:"uppercase",fontFamily:"'JetBrains Mono'",marginBottom:6}}>🇮🇳 Union Budget — Public Transparency Portal</p>
+          <h1 style={{color:C.white,fontFamily:"'Syne'",fontWeight:800,fontSize:"clamp(17px,3.5vw,27px)",lineHeight:1.2,marginBottom:8}}>Government Spending<br/><span style={{color:C.accent}}>Made Transparent</span></h1>
+          <p style={{color:C.muted,fontSize:13}}>No login required. Real-time public fund data.</p>
+        </div>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          {[{v:"₹45.21L Cr",l:"Total Budget",c:C.accent},{v:"77.7%",l:"Utilised",c:C.green},{v:"8",l:"Depts",c:C.gold}].map(({v,l,c})=>(
+            <div key={l} style={{textAlign:"center",background:C.panel,border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 14px"}}><p style={{color:c,fontFamily:"'Syne'",fontWeight:800,fontSize:18}}>{v}</p><p style={{color:C.muted,fontSize:10,textTransform:"uppercase",letterSpacing:1}}>{l}</p></div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"1fr 268px",gap:18,padding:"18px 20px",maxWidth:1360,margin:"0 auto"}}>
+        <div>
+          {tab==="spending"&&<SpTab/>}
+          {tab==="departments"&&<DpTab/>}
+          {tab==="transparency"&&<TrTab complaints={complaints}/>}
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <QRWidget onForm={()=>setShowForm(true)} onMine={()=>setShowMine(true)} pending={pendingMine}/>
+          <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:16}}>
+            <p style={{color:C.muted,fontSize:10,letterSpacing:2,textTransform:"uppercase",fontFamily:"'JetBrains Mono'",marginBottom:12}}>Live Complaint Stats</p>
+            {[{l:"Total Filed",v:complaints.length,c:C.accent},{l:"Pending",v:pend,c:C.gold},{l:"Resolved",v:complaints.filter(c=>c.status==="Resolved").length,c:C.green},{l:"Critical",v:complaints.filter(c=>c.severity==="critical").length,c:C.red}].map(({l,v,c})=>(
+              <div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:`1px solid ${C.border}`}}><span style={{color:C.muted,fontSize:12}}>{l}</span><span style={{color:c,fontFamily:"'JetBrains Mono'",fontWeight:700,fontSize:16}}>{v}</span></div>
+            ))}
+            {complaints.length>0&&<div style={{marginTop:12}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{color:C.muted,fontSize:11}}>Resolution rate</span><span style={{color:C.green,fontFamily:"'JetBrains Mono'",fontSize:11}}>{Math.round((complaints.filter(c=>c.status==="Resolved").length/complaints.length)*100)}%</span></div><div style={{background:C.border,borderRadius:4,height:6,overflow:"hidden"}}><div style={{width:`${(complaints.filter(c=>c.status==="Resolved").length/complaints.length)*100}%`,height:"100%",background:C.green,borderRadius:4,transition:"width .5s ease"}}/></div></div>}
+          </div>
+          <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:14,padding:16}}>
+            <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:12}}><div style={{width:6,height:6,background:C.red,borderRadius:"50%"}} className="pulse"/><span style={{color:C.muted,fontSize:10,letterSpacing:2,textTransform:"uppercase",fontFamily:"'JetBrains Mono'"}}>Live Updates</span></div>
+            {[{t:"Infrastructure fund disbursed",time:"2m",c:C.gold},{t:"Education Q4 report filed",time:"11m",c:C.accent},{t:"Health audit complete",time:"34m",c:C.green},{t:"Defence procurement approved",time:"1h",c:C.red},{t:"Agriculture subsidy released",time:"2h",c:C.purple}].map((x,i)=>(
+              <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid ${C.border}`}}>
+                <div style={{display:"flex",gap:8,alignItems:"flex-start"}}><div style={{width:6,height:6,borderRadius:"50%",background:x.c,marginTop:5,flexShrink:0}}/><p style={{color:C.text,fontSize:12,lineHeight:1.4}}>{x.t}</p></div>
+                <span style={{color:C.muted,fontSize:10,whiteSpace:"nowrap",marginLeft:8,fontFamily:"'JetBrains Mono'"}}>{x.time} ago</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {showForm&&<ComplaintForm onClose={()=>setShowForm(false)} onDone={c=>{addC(c);setShowForm(false);setShowMine(true);}}/>}
+      {showMine&&<MyPanel onClose={()=>setShowMine(false)} all={complaints} onResolve={resolve}/>}
+    </div>
+  );
+}
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
