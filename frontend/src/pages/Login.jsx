@@ -30,7 +30,7 @@ export default function Login() {
         navigate('/dashboard/official'); // Routing to the official dashboard we built
         return;
       }
-      
+
       if (email === 'auditor@gov.in' && password === '12345678') {
         const fakeUser = {
           id: 'auth-2',
@@ -40,7 +40,7 @@ export default function Login() {
         };
         localStorage.setItem('token', 'mock_token_auditor');
         localStorage.setItem('user', JSON.stringify(fakeUser));
-        navigate('/dashboard/auditor'); 
+        navigate('/dashboard/auditor');
         return;
       }
 

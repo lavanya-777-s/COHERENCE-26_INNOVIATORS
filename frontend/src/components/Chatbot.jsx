@@ -65,7 +65,7 @@ export default function Chatbot({ district }) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_20px_50px_rgb(0,0,0,0.15)] border border-slate-200 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 w-80 sm:w-96 h-[500px] bg-white rounded-2xl shadow-[0_20px_50px_rgb(0,0,0,0.15)] border border-slate-200 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
 
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-4 text-white flex justify-between items-center">
@@ -92,7 +92,7 @@ export default function Chatbot({ district }) {
 
           {/* Messages Area */}
           <div className="flex-1 relative overflow-hidden bg-slate-50">
-            <div ref={scrollContainerRef} className="absolute inset-0 p-4 h-full w-full overflow-y-auto flex flex-col space-y-4 hide-scrollbar">
+            <div ref={scrollContainerRef} className="absolute inset-0 p-4 h-full w-full overflow-y-auto flex flex-col space-y-4">
 
             {/* AI Suggestion Chips (Hackathon wow-factor) */}
             <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar shrink-0">
@@ -151,7 +151,7 @@ export default function Chatbot({ district }) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Lumina AI..."
+                placeholder="Ask Predictor AI..."
                 className="w-full bg-slate-100 border-transparent focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-xl pl-4 pr-12 py-3 text-sm font-medium text-slate-800 transition-all outline-none"
               />
               <button

@@ -282,6 +282,8 @@ export default function OfficialDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
         {/* --- TAB: OVERVIEW --- */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
             
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

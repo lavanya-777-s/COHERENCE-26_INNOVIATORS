@@ -1,310 +1,478 @@
-import { AlertCircle, BarChart3, TrendingUp, Users, ChevronDown, MapPin, Search, ShieldAlert } from 'lucide-react';
-import { useEffect, useState, useMemo } from 'react';
-import { STATIC_DATA, analyzeAnomalies } from '../data/budgetStaticData';
+import { useState, useMemo } from 'react';
+import { ShieldCheck, MapPin, Bell, AlertTriangle, CheckCircle, Clock, Info, MessageSquare, Send, Lock, Unlock, Camera, FileText, ThumbsUp } from 'lucide-react';
 
-export default function CitizenPublicDashboard() {
-  const [selectedState, setSelectedState] = useState(STATIC_DATA.states[0]?.id || '');
-  const [selectedDistrict, setSelectedDistrict] = useState(STATIC_DATA.states[0]?.districts[0]?.id || '');
+// ── Budget Data (from budget_data.csv) ────────────────────────────────────────
+const BUDGET_DATA = [
+  { department: "Health", district: "Nairobi", project: "Hospital Renovation", allocated: 5000000, spent: 5100000, month: "January" },
+  { department: "Education", district: "Mombasa", project: "School Construction", allocated: 3000000, spent: 2900000, month: "January" },
+  { department: "Water", district: "Kisumu", project: "Borehole Drilling", allocated: 1500000, spent: 1450000, month: "January" },
+  { department: "Roads", district: "Nakuru", project: "Road Repair Phase 1", allocated: 8000000, spent: 7800000, month: "January" },
+  { department: "Agriculture", district: "Eldoret", project: "Irrigation Setup", allocated: 2000000, spent: 1900000, month: "January" },
+  { department: "Health", district: "Nairobi", project: "Medical Equipment", allocated: 4000000, spent: 3950000, month: "February" },
+  { department: "Education", district: "Mombasa", project: "Teacher Training", allocated: 500000, spent: 490000, month: "February" },
+  { department: "Water", district: "Kisumu", project: "Pipeline Extension", allocated: 2500000, spent: 2480000, month: "February" },
+  { department: "Roads", district: "Nakuru", project: "Bridge Construction", allocated: 12000000, spent: 11500000, month: "February" },
+  { department: "Agriculture", district: "Eldoret", project: "Seed Distribution", allocated: 800000, spent: 780000, month: "February" },
+  { department: "Health", district: "Nairobi", project: "Drug Procurement", allocated: 6000000, spent: 9500000, month: "March" },
+  { department: "Education", district: "Mombasa", project: "Textbook Supply", allocated: 1200000, spent: 1180000, month: "March" },
+  { department: "Water", district: "Kisumu", project: "Purification Plant", allocated: 7000000, spent: 6800000, month: "March" },
+  { department: "Roads", district: "Nakuru", project: "Highway Expansion", allocated: 20000000, spent: 19800000, month: "March" },
+  { department: "Agriculture", district: "Eldoret", project: "Fertilizer Supply", allocated: 1500000, spent: 200000, month: "March" },
+  { department: "Health", district: "Nairobi", project: "Ambulance Purchase", allocated: 3000000, spent: 4500000, month: "April" },
+  { department: "Education", district: "Mombasa", project: "Lab Equipment", allocated: 2000000, spent: 1950000, month: "April" },
+  { department: "Water", district: "Kisumu", project: "Water Towers", allocated: 5000000, spent: 4900000, month: "April" },
+  { department: "Roads", district: "Nakuru", project: "Street Lighting", allocated: 1000000, spent: 980000, month: "April" },
+  { department: "Agriculture", district: "Eldoret", project: "Cold Storage", allocated: 3000000, spent: 2950000, month: "April" },
+  { department: "Health", district: "Nairobi", project: "Staff Housing", allocated: 4000000, spent: 3900000, month: "May" },
+  { department: "Education", district: "Mombasa", project: "Computer Lab", allocated: 2500000, spent: 2400000, month: "May" },
+  { department: "Water", district: "Kisumu", project: "Sewage System", allocated: 8000000, spent: 7800000, month: "May" },
+  { department: "Roads", district: "Nakuru", project: "Pedestrian Walkways", allocated: 600000, spent: 580000, month: "May" },
+  { department: "Agriculture", district: "Eldoret", project: "Market Construction", allocated: 4000000, spent: 3900000, month: "May" },
+  { department: "Health", district: "Nairobi", project: "ICU Setup", allocated: 10000000, spent: 9800000, month: "June" },
+  { department: "Education", district: "Mombasa", project: "Sports Facilities", allocated: 1500000, spent: 50000, month: "June" },
+  { department: "Water", district: "Kisumu", project: "Meter Installation", allocated: 500000, spent: 495000, month: "June" },
+  { department: "Roads", district: "Nakuru", project: "Traffic Signals", allocated: 800000, spent: 790000, month: "June" },
+  { department: "Agriculture", district: "Eldoret", project: "Greenhouse Project", allocated: 2000000, spent: 1950000, month: "June" },
+  { department: "Health", district: "Nairobi", project: "Mental Health Unit", allocated: 3000000, spent: 2950000, month: "July" },
+  { department: "Education", district: "Mombasa", project: "Library Setup", allocated: 1800000, spent: 1750000, month: "July" },
+  { department: "Water", district: "Kisumu", project: "Reservoir Upgrade", allocated: 6000000, spent: 8900000, month: "July" },
+  { department: "Roads", district: "Nakuru", project: "Rural Access Roads", allocated: 5000000, spent: 4800000, month: "July" },
+  { department: "Agriculture", district: "Eldoret", project: "Training Center", allocated: 1000000, spent: 980000, month: "July" },
+  { department: "Health", district: "Nairobi", project: "Vaccination Drive", allocated: 2000000, spent: 1950000, month: "August" },
+  { department: "Education", district: "Mombasa", project: "Scholarship Fund", allocated: 3000000, spent: 2900000, month: "August" },
+  { department: "Water", district: "Kisumu", project: "Desalination Study", allocated: 500000, spent: 490000, month: "August" },
+  { department: "Roads", district: "Nakuru", project: "Drainage Systems", allocated: 4000000, spent: 3900000, month: "August" },
+  { department: "Agriculture", district: "Eldoret", project: "Crop Insurance", allocated: 700000, spent: 680000, month: "August" },
+  { department: "Health", district: "Nairobi", project: "Radiology Equipment", allocated: 8000000, spent: 12000000, month: "September" },
+  { department: "Education", district: "Mombasa", project: "University Grants", allocated: 5000000, spent: 4900000, month: "September" },
+  { department: "Water", district: "Kisumu", project: "Smart Meters", allocated: 2000000, spent: 1950000, month: "September" },
+  { department: "Roads", district: "Nakuru", project: "Road Marking", allocated: 300000, spent: 295000, month: "September" },
+  { department: "Agriculture", district: "Eldoret", project: "Export Support", allocated: 1200000, spent: 1150000, month: "September" },
+  { department: "Health", district: "Nairobi", project: "Dialysis Center", allocated: 6000000, spent: 5900000, month: "October" },
+  { department: "Education", district: "Mombasa", project: "Adult Literacy", allocated: 400000, spent: 30000, month: "October" },
+  { department: "Water", district: "Kisumu", project: "Leak Detection", allocated: 1000000, spent: 980000, month: "October" },
+  { department: "Roads", district: "Nakuru", project: "Bypass Construction", allocated: 15000000, spent: 14800000, month: "October" },
+  { department: "Agriculture", district: "Eldoret", project: "Livestock Support", allocated: 900000, spent: 870000, month: "October" },
+  { department: "Health", district: "Nairobi", project: "Surgery Wing", allocated: 12000000, spent: 11800000, month: "November" },
+  { department: "Education", district: "Mombasa", project: "STEM Programs", allocated: 1500000, spent: 1450000, month: "November" },
+  { department: "Water", district: "Kisumu", project: "Community Taps", allocated: 800000, spent: 780000, month: "November" },
+  { department: "Roads", district: "Nakuru", project: "Rest Areas", allocated: 600000, spent: 585000, month: "November" },
+  { department: "Agriculture", district: "Eldoret", project: "Agri-Tech Pilot", allocated: 2000000, spent: 1950000, month: "November" },
+  { department: "Health", district: "Nairobi", project: "Staff Training", allocated: 1000000, spent: 980000, month: "December" },
+  { department: "Education", district: "Mombasa", project: "Exam Centers", allocated: 700000, spent: 685000, month: "December" },
+  { department: "Water", district: "Kisumu", project: "Annual Maintenance", allocated: 500000, spent: 490000, month: "December" },
+  { department: "Roads", district: "Nakuru", project: "Year-End Audit", allocated: 200000, spent: 195000, month: "December" },
+  { department: "Agriculture", district: "Eldoret", project: "Annual Review", allocated: 300000, spent: 290000, month: "December" },
+];
 
-  const [globalLeakages, setGlobalLeakages] = useState([]);
-  const [toastMessage, setToastMessage] = useState('');
+// ── Audit Results Data (from AuditorDashboard) ────────────────────────────────
+const AUDIT_SUMMARY = {
+  highRisk: 5,
+  mediumRisk: 3,
+  completed: 12,
+  lastUpdated: "2025-03-05",
+};
 
-  // Auto-update district when state changes
-  useEffect(() => {
-    const s = STATIC_DATA.states.find(st => st.id === selectedState);
-    if (s && s.districts.length > 0) {
-      setSelectedDistrict(s.districts[0].id);
-    }
-  }, [selectedState]);
+const FLAGGED_TRANSACTIONS = [
+  { id: 1, project: "Drug Procurement", department: "Health", district: "Nairobi", month: "March", riskScore: 8.6, allocated: 6000000, spent: 9500000, status: "Under Investigation" },
+  { id: 2, project: "Ambulance Purchase", department: "Health", district: "Nairobi", month: "April", riskScore: 8.7, allocated: 3000000, spent: 4500000, status: "Under Investigation" },
+  { id: 3, project: "Radiology Equipment", department: "Health", district: "Nairobi", month: "September", riskScore: 8.8, allocated: 8000000, spent: 12000000, status: "Under Investigation" },
+  { id: 4, project: "Reservoir Upgrade", department: "Water", district: "Kisumu", month: "July", riskScore: 8.5, allocated: 6000000, spent: 8900000, status: "Under Investigation" },
+  { id: 5, project: "Hospital Renovation", department: "Health", district: "Nairobi", month: "January", riskScore: 8.5, allocated: 5000000, spent: 5100000, status: "Under Investigation" },
+];
 
-  // Extract Global Leakages ONCE
-  useEffect(() => {
-    const allAnomalies = [];
-    STATIC_DATA.states.forEach(s => {
-      s.districts.forEach(d => {
-        d.departments.forEach(dept => {
-          const analysis = analyzeAnomalies(dept);
-          if (analysis.alert) {
-            allAnomalies.push({
-              department: dept.name,
-              project: `${d.name} Region`,
-              amount: Math.round(Math.abs(analysis.variance) / 100000).toLocaleString() + 'L',
-              risk: analysis.risk === 'high' ? 'High' : (analysis.risk === 'medium' ? 'Medium' : 'Low'),
-              variancePercent: analysis.variancePercent
-            });
-          }
-        });
-      });
-    });
-    allAnomalies.sort((a, b) => b.variancePercent - a.variancePercent);
-    setGlobalLeakages(allAnomalies.slice(0, 5));
-  }, []);
+const AUDIT_TRAIL = [
+  { date: "2025-03-05", event: "Budget allocation approved for Health Dept", type: "approved" },
+  { date: "2025-03-04", event: "Anomaly flagged in Roads Dept spending", type: "flagged" },
+  { date: "2025-03-03", event: "Investigation completed — No fraud found in Water Dept", type: "completed" },
+  { date: "2025-03-02", event: "Over-expenditure detected in Radiology Equipment project", type: "flagged" },
+  { date: "2025-03-01", event: "Quarterly audit review initiated for all districts", type: "info" },
+];
 
-  const currentState = STATIC_DATA.states.find(s => s.id === selectedState);
-  const currentDistrict = currentState?.districts.find(d => d.id === selectedDistrict);
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt = (n) => n >= 1000000 ? `KES ${(n / 1000000).toFixed(1)}M` : `KES ${(n / 1000).toFixed(0)}K`;
+const pct = (s, a) => a > 0 ? Math.round((s / a) * 100) : 0;
+const DISTRICTS = [...new Set(BUDGET_DATA.map(d => d.district))];
+const MONTHS = [...new Set(BUDGET_DATA.map(d => d.month))];
+const DEPT_ICONS = { Health: "🏥", Education: "🎓", Water: "💧", Roads: "🛣️", Agriculture: "🌾" };
 
-  // Compute local stats based ONLY on the selected district
-  const localStats = useMemo(() => {
-    if (!currentDistrict) return null;
-    let totalAlloc = currentDistrict.allocation;
-    let totalSpent = currentDistrict.spent;
-    
-    // Safety check format
-    if(!totalAlloc) {
-         totalAlloc = currentDistrict.departments.reduce((sum, d) => sum + d.allocated, 0);
-         totalSpent = currentDistrict.departments.reduce((sum, d) => sum + d.spent, 0);
-    }
+// ── Sub Components ────────────────────────────────────────────────────────────
+function Bar({ spent, allocated }) {
+  const over = spent > allocated;
+  const w = Math.min((spent / allocated) * 100, 100);
+  return (
+    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className={`h-full rounded-full transition-all duration-700 ${over ? 'bg-rose-400' : w > 85 ? 'bg-emerald-400' : 'bg-blue-400'}`} style={{ width: `${w}%` }} />
+    </div>
+  );
+}
 
-    const utilizationRate = totalAlloc > 0 ? ((totalSpent / totalAlloc) * 100).toFixed(1) : 0;
+function Badge({ label, color }) {
+  const s = { red: "bg-rose-50 text-rose-600", amber: "bg-amber-50 text-amber-600", green: "bg-emerald-50 text-emerald-600", blue: "bg-blue-50 text-blue-600", gray: "bg-gray-100 text-gray-500" };
+  return <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${s[color] || s.gray}`}>{label}</span>;
+}
 
-    const formattedDepartments = currentDistrict.departments.map(dept => {
-      const percentage = dept.allocated > 0 ? Math.round((dept.spent / dept.allocated) * 100) : 0;
-      return {
-        name: dept.name,
-        allocated: Math.round(dept.allocated / 100000), // L format
-        spent: Math.round(dept.spent / 100000),
-        percentage
-      };
-    }).sort((a, b) => b.percentage - a.percentage);
+function RiskDot({ score }) {
+  const color = score >= 8.7 ? 'bg-rose-500' : score >= 8.5 ? 'bg-amber-400' : 'bg-yellow-300';
+  return <span className={`inline-block w-2 h-2 rounded-full ${color} mr-1.5`} />;
+}
 
-    // Extract raw projects for citizens to trace
-    const localProjects = currentDistrict.departments.flatMap(dept => 
-      dept.projects.map(p => ({ ...p, department: dept.name }))
-    );
+// ── Main Component ────────────────────────────────────────────────────────────
+export default function CitizenDashboard() {
+  const [tab, setTab] = useState("audit");
+  const [district, setDistrict] = useState("All");
+  const [month, setMonth] = useState("All");
+  const [reportType, setReportType] = useState('fraud');
+  const [isAnonymous, setIsAnonymous] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
 
-    return { totalAlloc, totalSpent, utilizationRate, departments: formattedDepartments, localProjects };
-  }, [currentDistrict]);
+  const filtered = useMemo(() =>
+    BUDGET_DATA.filter(r =>
+      (district === "All" || r.district === district) &&
+      (month === "All" || r.month === month)
+    ), [district, month]);
 
-  const handleFlagGhostProject = (projectName) => {
-    setToastMessage(`🚨 Report for "${projectName}" sent to Auditor Hub anonymously.`);
-    setTimeout(() => setToastMessage(''), 4000);
-  };
-
-  if (!localStats) return null;
+  const totalAllocated = filtered.reduce((s, r) => s + r.allocated, 0);
+  const totalSpent = filtered.reduce((s, r) => s + r.spent, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-indigo-500 selection:text-white pb-20 relative">
-      
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-rose-600 text-white px-6 py-3 rounded-full shadow-2xl shadow-rose-900/50 flex items-center gap-3 animate-in slide-in-from-top-10 fade-in duration-300 font-bold border border-rose-400">
-           <ShieldAlert size={20} />
-           {toastMessage}
-        </div>
-      )}
+    <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Sora', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-      {/* Hero Section */}
-      <section className="pt-20 pb-12 px-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white border-b border-indigo-500/30">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-center md:text-left">
-                <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-xs tracking-wider border border-indigo-500/30 mb-4 uppercase">Direct Public Oversight</span>
-                <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">Know Your Taxes.</h1>
-                <p className="text-indigo-200 text-lg max-w-xl font-medium">Transparent budget tracking for every citizen. View exactly where funds are deployed in your home district down to the project level.</p>
+      {/* Navbar */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gray-900 flex items-center justify-center">
+              <ShieldCheck size={14} className="text-white" />
             </div>
-            
-            {/* Location Selectors */}
-            <div className="bg-slate-800/50 backdrop-blur-md border border-slate-700 p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-               <div className="flex items-center gap-3 mb-4 text-indigo-300">
-                  <MapPin size={20} />
-                  <h3 className="font-bold">Select Your Local Area</h3>
-               </div>
-               
-               <div className="space-y-4">
-                  <div className="relative">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">State / Region</label>
-                    <select
-                      value={selectedState}
-                      onChange={(e) => setSelectedState(e.target.value)}
-                      className="appearance-none w-full pl-4 pr-10 py-3 bg-slate-900 border border-slate-700 rounded-xl font-bold text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
-                    >
-                      {STATIC_DATA.states.map(state => (
-                        <option key={state.id} value={state.id}>{state.name}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={16} className="absolute right-4 bottom-3.5 text-slate-500 pointer-events-none" />
-                  </div>
-
-                  <div className="relative">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">District / City</label>
-                    <select
-                      value={selectedDistrict}
-                      onChange={(e) => setSelectedDistrict(e.target.value)}
-                      className="appearance-none w-full pl-4 pr-10 py-3 bg-slate-900 border border-slate-700 rounded-xl font-bold text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
-                    >
-                      {currentState?.districts.map(district => (
-                        <option key={district.id} value={district.id}>{district.name}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={16} className="absolute right-4 bottom-3.5 text-slate-500 pointer-events-none" />
-                  </div>
-               </div>
-            </div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        
-        <div className="flex items-center gap-3 mb-6 px-1">
-           <h2 className="text-xl font-bold text-slate-900">Live Numbers for {currentDistrict?.name}</h2>
-           <span className="flex h-3 w-3 relative">
-             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-             <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-           </span>
-        </div>
-
-        {/* Local Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex items-center gap-5 hover:border-indigo-300 transition-colors">
-            <div className="bg-indigo-50 p-3.5 rounded-xl">
-               <BarChart3 className="text-indigo-600" size={28} />
-            </div>
-            <div>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Allocated Budget</p>
-              <p className="text-2xl font-extrabold text-slate-900 tracking-tight">₹{(localStats.totalAlloc/10000000).toFixed(2)}Cr</p>
-            </div>
+            <span className="font-bold text-gray-900 tracking-tight">PublicLedger</span>
+            <span className="hidden sm:inline text-xs text-gray-400 ml-1">· Kenya National Budget FY 2024</span>
           </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex items-center gap-5 hover:border-emerald-300 transition-colors">
-            <div className="bg-emerald-50 p-3.5 rounded-xl">
-               <TrendingUp className="text-emerald-600" size={28} />
-            </div>
-            <div>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Fund Disbursed</p>
-              <p className="text-2xl font-extrabold text-slate-900 tracking-tight">₹{(localStats.totalSpent/10000000).toFixed(2)}Cr</p>
-            </div>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex items-center gap-5 hover:border-violet-300 transition-colors">
-            <div className="bg-violet-50 p-3.5 rounded-xl">
-               <Users className="text-violet-600" size={28} />
-            </div>
-            <div>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Local Utilization</p>
-              <p className="text-2xl font-extrabold text-slate-900 tracking-tight">{localStats.utilizationRate}%</p>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+              Last audit: {AUDIT_SUMMARY.lastUpdated}
+            </span>
+            <Bell size={16} className="text-gray-400" />
           </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-            {/* Department Breakdown */}
-            <div className="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">📊 Sector Spending</h2>
-            <div className="space-y-5">
-                {localStats.departments.map((dept, idx) => (
-                <div key={idx} className="group">
-                    <div className="flex justify-between items-end mb-2">
-                    <div>
-                        <h3 className="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{dept.name}</h3>
-                        <p className="text-xs text-slate-500 font-medium">₹{dept.spent}L / ₹{dept.allocated}L</p>
-                    </div>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${dept.percentage > 100 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'}`}>
-                        {dept.percentage}% 
-                    </span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                    <div
-                        className={`h-full rounded-full transition-all duration-1000 ${dept.percentage > 100 ? 'bg-rose-500' : 'bg-gradient-to-r from-indigo-500 to-emerald-400'}`}
-                        style={{ width: `${Math.min(dept.percentage, 100)}%` }}
-                    ></div>
-                    </div>
-                    {dept.percentage > 100 && <p className="text-xs text-rose-600 font-bold mt-1.5 flex items-center gap-1"><AlertCircle size={12}/> Over Budget</p>}
-                </div>
-                ))}
+      <main className="max-w-5xl mx-auto px-4 py-7 space-y-6">
+
+        {/* Info Banner */}
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-3.5 flex items-start gap-3">
+          <Info size={16} className="text-blue-400 mt-0.5 shrink-0" />
+          <p className="text-sm text-blue-700 font-medium">
+            This page displays <strong>official audit results</strong> published by the Auditor General's office. Data is updated after each audit cycle and is read-only for public transparency.
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+          {[
+            { id: "audit", label: "Audit Results" },
+            { id: "budget", label: "Budget Overview" },
+            { id: "trail", label: "Audit Trail" },
+            { id: "feedback", label: "Speak Up" },
+          ].map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${tab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ══ TAB: AUDIT RESULTS ══ */}
+        {tab === "audit" && (
+          <section className="space-y-6">
+
+            {/* Risk Summary Cards */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white border border-rose-100 rounded-2xl px-5 py-4 shadow-sm">
+                <p className="text-[11px] font-semibold text-rose-400 uppercase tracking-widest mb-1">High Risk</p>
+                <p className="text-3xl font-bold text-rose-500">{AUDIT_SUMMARY.highRisk}</p>
+                <p className="text-xs text-gray-400 mt-0.5">items flagged</p>
+              </div>
+              <div className="bg-white border border-amber-100 rounded-2xl px-5 py-4 shadow-sm">
+                <p className="text-[11px] font-semibold text-amber-500 uppercase tracking-widest mb-1">Medium Risk</p>
+                <p className="text-3xl font-bold text-amber-500">{AUDIT_SUMMARY.mediumRisk}</p>
+                <p className="text-xs text-gray-400 mt-0.5">items flagged</p>
+              </div>
+              <div className="bg-white border border-emerald-100 rounded-2xl px-5 py-4 shadow-sm">
+                <p className="text-[11px] font-semibold text-emerald-500 uppercase tracking-widest mb-1">Completed</p>
+                <p className="text-3xl font-bold text-emerald-500">{AUDIT_SUMMARY.completed}</p>
+                <p className="text-xs text-gray-400 mt-0.5">investigations closed</p>
+              </div>
             </div>
-            </div>
 
-            {/* Local Projects Tracker with Whistleblower */}
-            <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 className="text-lg font-bold text-slate-900">📍 Active Ward Projects</h2>
-                        <p className="text-sm font-medium text-slate-500 mt-0.5">Track exact funds meant for your neighborhood</p>
-                    </div>
-                    <div className="bg-indigo-50 text-indigo-700 font-bold px-3 py-1.5 rounded-lg text-sm">
-                        {localStats.localProjects.length} Verified
-                    </div>
-                </div>
-
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                    {localStats.localProjects.length === 0 ? (
-                        <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
-                           <p className="text-slate-500 font-medium">No verified projects found for this local region yet.</p>
+            {/* Flagged Transactions */}
+            <div>
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">
+                Flagged Transactions — Published by Auditor General
+              </p>
+              <div className="space-y-3">
+                {FLAGGED_TRANSACTIONS.map((item) => {
+                  const overspend = item.spent - item.allocated;
+                  const overpct = pct(item.spent, item.allocated);
+                  return (
+                    <div key={item.id} className="bg-white border border-gray-100 rounded-2xl px-5 py-4 shadow-sm">
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                            <span className="text-sm">{DEPT_ICONS[item.department]}</span>
+                            <Badge label={item.department} color="blue" />
+                            <Badge label={item.district} color="gray" />
+                            <Badge label={item.month} color="gray" />
+                          </div>
+                          <p className="font-semibold text-gray-900">{item.project}</p>
                         </div>
-                    ) : (
-                        localStats.localProjects.map((proj, idx) => {
-                            const pSpent = proj.spent / 100000;
-                            const pAlloc = proj.allocated / 100000;
-                            const percent = Math.min((pSpent / pAlloc) * 100, 100);
-                            
-                            return (
-                            <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-md transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4">
-                               <div className="flex-1">
-                                   <div className="flex items-center gap-2 mb-1">
-                                      <span className="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">{proj.department}</span>
-                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${proj.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                                         {proj.status}
-                                      </span>
-                                   </div>
-                                   <h3 className="font-bold text-slate-900 tracking-tight">{proj.name}</h3>
-                                   <div className="flex items-center gap-4 mt-3">
-                                       <div className="w-32 bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                           <div className={`h-full ${proj.status === 'completed' ? 'bg-emerald-500' : 'bg-indigo-500'}`} style={{width: `${percent}%`}}></div>
-                                       </div>
-                                       <p className="text-xs font-bold text-slate-500">₹{pSpent.toFixed(1)}L <span className="text-slate-400 font-medium">of ₹{pAlloc.toFixed(1)}L</span></p>
-                                   </div>
-                               </div>
+                        <div className="text-right shrink-0">
+                          <div className="flex items-center justify-end mb-1">
+                            <RiskDot score={item.riskScore} />
+                            <span className="text-xs font-bold text-gray-600">Risk {item.riskScore}/10</span>
+                          </div>
+                          <Badge label={item.status} color="amber" />
+                        </div>
+                      </div>
 
-                               {/* Whistleblower Action */}
-                               <div className="border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-4 flex items-center justify-end">
-                                   <button 
-                                      onClick={() => handleFlagGhostProject(proj.name)}
-                                      title="This project doesn't exist? Report it!"
-                                      className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-slate-200 hover:border-rose-400 hover:bg-rose-50 text-slate-600 hover:text-rose-700 text-xs font-bold rounded-lg transition-all"
-                                   >
-                                      <AlertCircle size={16} />
-                                      <span className="md:hidden lg:inline">Report Ghost Project</span>
-                                   </button>
-                               </div>
-                            </div>
-                        )})
-                    )}
-                </div>
+                      <div className="grid grid-cols-3 gap-3 bg-gray-50 rounded-xl px-4 py-3 text-xs">
+                        <div>
+                          <p className="text-gray-400 mb-0.5">Allocated</p>
+                          <p className="font-bold text-gray-700">{fmt(item.allocated)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 mb-0.5">Spent</p>
+                          <p className="font-bold text-rose-600">{fmt(item.spent)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 mb-0.5">Overspend</p>
+                          <p className="font-bold text-rose-600">+{fmt(overspend)} ({overpct}%)</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-        </div>
+          </section>
+        )}
 
-        {/* Global Flagged Transactions (Trending Issues) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
-          <div className="mb-5">
-             <h2 className="text-lg font-bold text-slate-900 border-l-4 border-rose-500 pl-3">Trending Public Flags & Investigations</h2>
-             <p className="text-sm text-slate-500 mt-1 pl-4">Highest risk anomalies currently under review by the Auditor General's office nationwide.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {globalLeakages.map((leak, idx) => (
-              <div key={idx} className={`border p-4 rounded-xl flex items-start gap-3 bg-rose-50 border-rose-200`}>
-                <div className="bg-rose-100 p-2 rounded-lg shrink-0">
-                   <AlertCircle className="text-rose-600" size={20} />
+        {/* ══ TAB: BUDGET OVERVIEW ══ */}
+        {tab === "budget" && (
+          <section className="space-y-4">
+
+            {/* Filters */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <MapPin size={11} /> Filter
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "District", value: district, set: setDistrict, options: ["All", ...DISTRICTS] },
+                  { label: "Month", value: month, set: setMonth, options: ["All", ...MONTHS] },
+                ].map(f => (
+                  <div key={f.label}>
+                    <label className="text-xs font-semibold text-gray-500 block mb-1.5">{f.label}</label>
+                    <select value={f.value} onChange={e => f.set(e.target.value)} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:border-gray-400 cursor-pointer">
+                      {f.options.map(o => <option key={o}>{o}</option>)}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Totals */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 shadow-sm">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Total Allocated</p>
+                <p className="text-xl font-bold text-gray-900">{fmt(totalAllocated)}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 shadow-sm">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Total Spent</p>
+                <p className={`text-xl font-bold ${totalSpent > totalAllocated ? 'text-rose-500' : 'text-emerald-600'}`}>{fmt(totalSpent)}</p>
+              </div>
+            </div>
+
+            {/* Projects list */}
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">{filtered.length} Projects</p>
+            <div className="space-y-2">
+              {filtered.map((row, i) => {
+                const p = pct(row.spent, row.allocated);
+                const over = row.spent > row.allocated;
+                return (
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <span className="text-sm">{DEPT_ICONS[row.department]}</span>
+                          <Badge label={row.department} color="blue" />
+                          <Badge label={row.district} color="gray" />
+                          <Badge label={row.month} color="gray" />
+                          {over && <Badge label="Over Budget" color="red" />}
+                        </div>
+                        <p className="font-semibold text-gray-900 text-sm">{row.project}</p>
+                      </div>
+                      <span className={`text-xs font-bold shrink-0 ${over ? 'text-rose-500' : 'text-gray-500'}`}>{p}%</span>
+                    </div>
+                    <Bar spent={row.spent} allocated={row.allocated} />
+                    <p className="text-xs text-gray-400 mt-1.5">{fmt(row.spent)} spent of {fmt(row.allocated)} allocated</p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ══ TAB: AUDIT TRAIL ══ */}
+        {tab === "trail" && (
+          <section className="space-y-3">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Official Audit Trail</p>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50">
+              {AUDIT_TRAIL.map((item, i) => {
+                const iconMap = {
+                  approved: <CheckCircle size={15} className="text-emerald-500" />,
+                  flagged: <AlertTriangle size={15} className="text-rose-400" />,
+                  completed: <CheckCircle size={15} className="text-blue-400" />,
+                  info: <Clock size={15} className="text-gray-400" />,
+                };
+                const bgMap = {
+                  approved: "bg-emerald-50",
+                  flagged: "bg-rose-50",
+                  completed: "bg-blue-50",
+                  info: "bg-gray-50",
+                };
+                return (
+                  <div key={i} className="px-5 py-4 flex items-start gap-3">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${bgMap[item.type]}`}>
+                      {iconMap[item.type]}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{item.event}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.date}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ══ TAB: SPEAK UP (FEEDBACK) ══ */}
+        {tab === "feedback" && (
+          <section className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+            {submitted ? (
+              <div className="bg-white border border-gray-100 shadow-sm rounded-3xl p-10 text-center">
+                <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <ThumbsUp size={36} className="text-emerald-500" />
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900 leading-tight mb-1">{leak.department} — {leak.project}</p>
-                  <p className="text-sm font-medium text-slate-600">Off-budget by: <span className="font-bold">₹{leak.amount}</span></p>
-                  <span className={`inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded border ${leak.risk === 'High' ? 'bg-rose-100 text-rose-700 border-rose-300' : 'bg-amber-100 text-amber-700 border-amber-300'}`}>
-                    {leak.risk} Risk / {leak.variancePercent.toFixed(0)}% Variance
-                  </span>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Report Secured</h3>
+                <p className="text-sm text-gray-500 max-w-sm mx-auto mb-8 leading-relaxed">Your report has been encrypted and submitted to the independent oversight committee. Thank you for contributing to national accountability.</p>
+                <button onClick={() => setSubmitted(false)} className="px-6 py-3 bg-gray-50 border border-gray-200 text-gray-700 font-bold text-sm rounded-xl hover:bg-gray-100 transition-all">Submit Another Report</button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="p-6 md:p-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-gray-50 pb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Confidential Report</h2>
+                      <p className="text-sm text-gray-500 mt-1">Report anomalies, broken infrastructure, or suggest improvements.</p>
+                    </div>
+                    {/* Anonymous Toggle - Unique UI */}
+                    <button 
+                      onClick={() => setIsAnonymous(!isAnonymous)}
+                      className={`shrink-0 relative flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 ${isAnonymous ? 'bg-gray-900 border-gray-900 text-white shadow-[0_4px_14px_0_rgba(0,0,0,0.2)]' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'}`}
+                    >
+                      {isAnonymous ? <Lock size={16} className="text-emerald-400" /> : <Unlock size={16} />}
+                      <span className="text-xs font-bold uppercase tracking-widest">{isAnonymous ? 'Anonymous On' : 'Public Mode'}</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Category Selector */}
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3">Classification</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {[
+                          { id: 'fraud', icon: AlertTriangle, title: "Fraud / Corruption", desc: "Report missing or misused funds", color: "rose" },
+                          { id: 'infrastructure', icon: Camera, title: "Infrastructure", desc: "Report broken roads, water issues", color: "blue" },
+                          { id: 'feedback', icon: MessageSquare, title: "General Feedback", desc: "Suggestions or general praise", color: "emerald" }
+                        ].map((type) => {
+                          const active = reportType === type.id;
+                          const c = type.color === 'rose' ? 'border-rose-200 bg-rose-50 text-rose-700 shadow-sm' : type.color === 'blue' ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm' : 'border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm';
+                          return (
+                            <div 
+                              key={type.id} 
+                              onClick={() => setReportType(type.id)}
+                              className={`cursor-pointer rounded-2xl p-4 md:p-5 border-2 transition-all duration-200 ${active ? c : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'}`}
+                            >
+                              <type.icon size={24} className={`mb-3 ${active ? '' : 'text-gray-400'}`} />
+                              <h4 className={`font-bold text-sm ${active ? '' : 'text-gray-700'}`}>{type.title}</h4>
+                              <p className={`text-xs mt-1 leading-relaxed ${active ? 'opacity-80' : 'text-gray-400'}`}>{type.desc}</p>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Location Binding */}
+                    <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Tag Affected Region (Optional)</label>
+                        <div className="flex gap-2">
+                           <div className="relative w-full">
+                              <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                              <select className="appearance-none w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-sm font-semibold text-gray-700 focus:outline-none focus:border-gray-400 transition-all cursor-pointer">
+                                  <option>Detecting current region...</option>
+                                  {DISTRICTS.map(d => <option key={d}>{d}</option>)}
+                              </select>
+                           </div>
+                        </div>
+                    </div>
+
+                    {/* Text Area */}
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description / Evidence Narrative</label>
+                      <textarea 
+                        rows="4" 
+                        placeholder={reportType === 'fraud' ? "Provide detailed information. Mention specific project names, contractor details, or anomalies noticed..." : "Describe the issue or feedback in detail..."}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 focus:outline-none focus:border-gray-400 focus:ring-4 focus:ring-gray-100 transition-all resize-none"
+                      ></textarea>
+                    </div>
+
+                    {/* Media Upload Dummy */}
+                    <div className="border border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group">
+                       <div className="w-12 h-12 bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform">
+                          <FileText size={20} className="text-blue-500" />
+                       </div>
+                       <p className="text-sm font-bold text-gray-800">Attach Supporting Evidence</p>
+                       <p className="text-xs text-gray-400 mt-1">Upload images (JPEG/PNG), PDFs, or Audio Files (Max 25MB)</p>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Footer / Submit */}
+                <div className="bg-gray-50 border-t border-gray-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                   <p className="text-xs font-semibold text-gray-500 flex items-center gap-2"><ShieldCheck size={16} className="text-emerald-500"/> Data encrypted. Protected by Whistleblower Act 2024.</p>
+                   <button 
+                     onClick={() => setSubmitted(true)}
+                     className="w-full sm:w-auto px-8 py-3.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-bold rounded-xl shadow-[0_4px_14px_0_rgba(0,0,0,0.15)] transition-all flex items-center justify-center gap-2 group"
+                   >
+                      Submit Report <Send size={16} className="group-hover:translate-x-1 transition-transform" />
+                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
+          </section>
+        )}
 
-      </div>
+      </main>
 
-      <footer className="bg-slate-900 py-8 text-center text-slate-400 text-sm mt-8 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="font-bold tracking-wide">© 2025 Central Public Budget Interface</p>
-            <div className="flex items-center gap-4 font-medium">
-                <a href="#" className="hover:text-white transition-colors">Submit Physical Fraud Proof</a>
-                <span className="text-slate-700">•</span>
-                <a href="#" className="hover:text-white transition-colors">Auditor Guidelines</a>
-            </div>
-        </div>
+      <footer className="border-t border-gray-100 mt-10 py-6 text-center text-xs text-gray-400">
+        © 2025 PublicLedger · Kenya National Budget Transparency Portal · Audit data published by Office of the Auditor General
       </footer>
     </div>
   );
